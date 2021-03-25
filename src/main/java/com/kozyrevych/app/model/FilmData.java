@@ -27,6 +27,9 @@ public class FilmData {
     private String country = "";
 
     @Size(min = 2, max = 200, message = "Incorrect size")
+    private String director = "";
+
+    @Size(min = 2, max = 200, message = "Incorrect size")
     private String composer = "";
 
     @Size(min = 2, max = 200, message = "Incorrect size")
@@ -35,7 +38,7 @@ public class FilmData {
     @Size(min = 2, max = 200, message = "Incorrect size")
     private String operator = "";
 
-    @Size(min = 2, max = 100, message = "Incorrect size")
+    @Size(min = 2, max = 150, message = "Incorrect size")
     private String genre = "";
 
     @Column(name = "film_length")
@@ -50,6 +53,7 @@ public class FilmData {
     private int budget;
 
     @Min(value = 0, message = "Incorrect minimum age")
+    @Max(value = 100, message = "Incorrect minimum age")
     @Column(name = "minimum_age")
     private int minimumAge;
 

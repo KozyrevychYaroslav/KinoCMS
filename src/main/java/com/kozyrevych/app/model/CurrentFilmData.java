@@ -7,6 +7,7 @@ import net.bytebuddy.dynamic.TypeResolutionStrategy;
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import java.util.Calendar;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ public class CurrentFilmData {
 
     @Column(name = "film_time")
     @Temporal(TemporalType.TIMESTAMP)
+    @NotNull(message = "Empty date")
     private Calendar filmTime;
 
     private boolean is3D;
@@ -43,7 +45,8 @@ public class CurrentFilmData {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "CurrentFilmAndUser",
             joinColumns = @JoinColumn(name = "usr_id"),
-    inverseJoinColumns = @JoinColumn(name = "current_film_data_id"))
+            inverseJoinColumns = @JoinColumn(name = "current_film_data_id")
+    )
     private Set<User> users;
 
 

@@ -30,11 +30,10 @@ public class User {
     @Size(min = 2, max = 30, message = "Incorrect size")
     private String name = "";
 
-    @Size(min = 2, max = 50, message = "Incorrect size")
+    @Size(max = 50, message = "Incorrect size")
     private String password = "";
 
     @Temporal(TemporalType.DATE)
-    @NotNull(message = "Empty date")
     private Date birthday;
 
     @Column(name = "registration_date")

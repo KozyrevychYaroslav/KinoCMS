@@ -60,7 +60,6 @@ public class CinemaTest {
     @Order(4)
     public void m3() {
         Cinema cinema = new Cinema();
-
         cinema.setAddress("Аркадия 60/а");
         cinema.setCinemaName("Аркадия");
         cinema.setInfo("some info");

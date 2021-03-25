@@ -20,7 +20,7 @@ public class News {
     private long id;
 
     @Column(name = "news_title")
-    @Size(min = 2, max = 100, message = "Incorrect size")
+    @Size(min = 2, max = 200, message = "Incorrect size")
     private String newsTitle = "";
 
     @Column(name = "news_date")

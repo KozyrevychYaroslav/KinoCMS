@@ -19,8 +19,8 @@ public class Image{
     private String info = "";
 
     @Column(name = "image_path")
-    @NotNull
-    private String imagePath = "";
+    @NotNull(message = "empty path")
+    private String imagePath;
 
     @Column(name = "image_name")
     @Size(min = 1, max = 200, message = "Incorrect size")
