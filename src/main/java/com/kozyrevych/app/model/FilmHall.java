@@ -24,7 +24,7 @@ public class FilmHall {
 
     private String info = "";
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
 

@@ -44,6 +44,6 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FreePlace> freePlaces;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<CurrentFilmData> currentFilmsData;
 }

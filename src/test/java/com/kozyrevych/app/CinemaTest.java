@@ -1,17 +1,9 @@
 package com.kozyrevych.app;
 
 import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.dao.StockDao;
 import com.kozyrevych.app.model.Cinema;
-import com.kozyrevych.app.model.Stock;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
-
-import javax.persistence.DiscriminatorValue;
-
-import java.util.Date;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,7 +21,6 @@ public class CinemaTest {
     @AfterAll
     @DisplayName("close session factory")
     public static void configEnd() {
-
         SessionFactoryUtil.closeSessionFactory();
     }
 
@@ -49,10 +40,10 @@ public class CinemaTest {
     @DisplayName("Get data from cinema table")
     @Order(3)
     public void m2() {
-       assertAll(() -> assertEquals("Высоцкого", cinemaDAO.get(1).getCinemaName()),
-               () -> assertEquals("Высоцкого 50/б", cinemaDAO.get(1).getAddress()),
-               () -> assertEquals("some info", cinemaDAO.get(1).getInfo())
-               );
+        assertAll(() -> assertEquals("Высоцкого", cinemaDAO.get("Высоцкого").getCinemaName()),
+                () -> assertEquals("Высоцкого 50/б", cinemaDAO.get("Высоцкого").getAddress()),
+                () -> assertEquals("some info", cinemaDAO.get("Высоцкого").getInfo())
+        );
     }
 
     @Test
@@ -60,19 +51,20 @@ public class CinemaTest {
     @Order(4)
     public void m3() {
         Cinema cinema = new Cinema();
+
         cinema.setAddress("Аркадия 60/а");
         cinema.setCinemaName("Аркадия");
         cinema.setInfo("some info");
         cinemaDAO.save(cinema);
 
-        assertAll(() -> assertEquals("Высоцкого", cinemaDAO.get(1).getCinemaName()),
-                () -> assertEquals("Высоцкого 50/б", cinemaDAO.get(1).getAddress()),
-                () -> assertEquals("some info", cinemaDAO.get(1).getInfo())
+        assertAll(() -> assertEquals("Высоцкого", cinemaDAO.get("Высоцкого").getCinemaName()),
+                () -> assertEquals("Высоцкого 50/б", cinemaDAO.get("Высоцкого").getAddress()),
+                () -> assertEquals("some info", cinemaDAO.get("Высоцкого").getInfo())
         );
 
-        assertAll(() -> assertEquals("Аркадия", cinemaDAO.get(2).getCinemaName()),
-                () -> assertEquals("Аркадия 60/а", cinemaDAO.get(2).getAddress()),
-                () -> assertEquals("some info", cinemaDAO.get(2).getInfo())
+        assertAll(() -> assertEquals("Аркадия", cinemaDAO.get("Аркадия").getCinemaName()),
+                () -> assertEquals("Аркадия 60/а", cinemaDAO.get("Аркадия").getAddress()),
+                () -> assertEquals("some info", cinemaDAO.get("Аркадия").getInfo())
         );
 
         assertEquals(2, cinemaDAO.getAll().size());
@@ -92,10 +84,28 @@ public class CinemaTest {
 
         assertEquals(3, cinemaDAO.getAll().size());
 
-        cinemaDAO.delete(cinema);
+        cinemaDAO.delete("delete");
 
         assertEquals(2, cinemaDAO.getAll().size());
 
-        assertNull(cinemaDAO.get(3));
+        assertNull(cinemaDAO.get("delete"));
+    }
+
+    @Order(6)
+    @DisplayName("Update cinema")
+    @Test
+    public void m5() {
+        Cinema cinema = new Cinema();
+
+        cinema.setAddress("Аркадия 60/а");
+        cinema.setCinemaName("Аркадия");
+        cinema.setInfo("some info changed");
+
+        Cinema cinema1 = cinemaDAO.get("Аркадия");
+
+        cinema1.setInfo("some info changed");
+        cinemaDAO.update(cinema1);
+
+        assertEquals(cinemaDAO.get("Аркадия"), cinema);
     }
 }

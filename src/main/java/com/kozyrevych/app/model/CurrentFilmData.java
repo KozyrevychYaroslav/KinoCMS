@@ -34,11 +34,11 @@ public class CurrentFilmData {
     @DecimalMax(value = "5000", message = "Too big number")
     private double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "film_hall_id", nullable = false)
     private FilmHall filmHall;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "film_data_id", nullable = false)
     private FilmData filmData;
 

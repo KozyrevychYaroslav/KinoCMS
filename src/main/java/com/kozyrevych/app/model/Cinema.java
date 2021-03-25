@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -40,21 +41,36 @@ public class Cinema {
             inverseJoinColumns = @JoinColumn(name = "film_data_id"))
     private Set<FilmData> filmsData;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     private Contacts contacts;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     private MobileApp mobileApp;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     private ChildrensRoom childrensRoom;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     private CafeBar cafeBar;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Image> images;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     private Advertising advertising;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cinema cinema = (Cinema) o;
+        return cinemaName.equals(cinema.cinemaName) && info.equals(cinema.info) && address.equals(cinema.address);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cinemaName, info, address);
+    }
+
+
 }

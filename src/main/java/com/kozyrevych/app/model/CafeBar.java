@@ -16,7 +16,16 @@ public class CafeBar {
 
     private String info = "";
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
+
+    @Override
+    public String toString() {
+        return "CafeBar{" +
+                "id=" + id +
+                ", info='" + info + '\'' +
+                ", cinema name ='" + cinema.getCinemaName() +
+                "\'}";
+    }
 }

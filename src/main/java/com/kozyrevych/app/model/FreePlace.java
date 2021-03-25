@@ -28,11 +28,11 @@ public class FreePlace {
     @Max(value = 50, message = "Too big number")
     private int rowNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "film_hall_id", nullable = false)
     private FilmHall filmHall;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usr_id")
     private User user;
 }

@@ -64,6 +64,6 @@ public class FilmData {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmData", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CurrentFilmData> currentFilmData;
 
-    @ManyToMany(mappedBy = "filmsData", fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "filmsData", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Cinema> cinemas;
 }

@@ -16,7 +16,7 @@ public class ChildrensRoom {
 
     private String info = "";
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
 }
