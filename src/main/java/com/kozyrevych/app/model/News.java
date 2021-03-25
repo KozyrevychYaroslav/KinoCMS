@@ -1,28 +1,29 @@
 package com.kozyrevych.app.model;
 
+import jdk.jfr.Enabled;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
-@Entity
 @Data
+@Entity
 @NoArgsConstructor
-public class Stock {
-
-    @Column(name = "stock_id")
+public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "news_id")
     private long id;
 
-    @Column(name = "stock_title")
+    @Column(name = "news_title")
     @Size(min = 2, max = 100, message = "Incorrect size")
-    private String title = "";
+    private String newsTitle = "";
 
-    @Column(name = "stock_date")
+    @Column(name = "news_date")
     @Temporal(TemporalType.DATE)
     @NotNull(message = "Empty date")
     private Date date;
@@ -32,5 +33,4 @@ public class Stock {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
-
 }

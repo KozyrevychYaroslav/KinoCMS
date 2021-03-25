@@ -15,7 +15,7 @@ public class SessionFactoryUtil {
         try {
             sessionFactory.close();
         } catch(NullPointerException e) {
-            System.out.println("Session factory has already been closed");
+            e.printStackTrace();
         }
     }
 }
