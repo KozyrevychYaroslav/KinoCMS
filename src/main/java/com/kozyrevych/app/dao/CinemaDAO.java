@@ -1,14 +1,12 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.CafeBar;
-import com.kozyrevych.app.model.Cinema;
-import com.kozyrevych.app.model.Image;
-import com.kozyrevych.app.model.Stock;
+import com.kozyrevych.app.model.*;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.hibernate.service.NullServiceException;
 
 import javax.persistence.NoResultException;
 import java.util.List;
@@ -50,7 +48,46 @@ public class CinemaDAO {
             c = session.get(Cinema.class, c.getId());
             Hibernate.initialize(c.getStocks());
             return c.getStocks();
+        } catch (NullPointerException e) {
+            System.out.println("No name: " + name);
+            return null;
         }
+    }
+
+    public Set<News> getNews(String name) {
+        try (final Session session = factory.openSession()) {
+            Cinema c = get(name);
+            c = session.get(Cinema.class, c.getId());
+            Hibernate.initialize(c.getNews());
+            return c.getNews();
+        } catch (NullPointerException e) {
+            System.out.println("No name: " + name);
+            return null;
+        }
+    }
+
+    public Set<FilmHall> getFilmHalls(String name) {
+        try (final Session session = factory.openSession()) {
+            Cinema c = get(name);
+            c = session.get(Cinema.class, c.getId());
+            Hibernate.initialize(c.getFilmHalls());
+            return c.getFilmHalls();
+        } catch (NullPointerException e) {
+            System.out.println("No name: " + name);
+            return null;
+        }
+    }
+
+    public Set<FilmData> getFilmsData(long id) {
+        try (final Session session = factory.openSession()) {
+            Cinema c = session.get(Cinema.class, id);
+            Hibernate.initialize(c.getFilmsData());
+            return c.getFilmsData();
+        } catch (NullPointerException e) {
+            System.out.println("no id: " + id);
+            return null;
+        }
+
     }
 
     public Set<Image> getImages(String name) {
@@ -59,12 +96,54 @@ public class CinemaDAO {
             c = session.get(Cinema.class, c.getId());
             Hibernate.initialize(c.getImages());
             return c.getImages();
+        } catch (NullPointerException e) {
+            System.out.println("No name: " + name);
+            return null;
         }
     }
 
     public CafeBar getCafeBar(long id) {
         try (final Session session = factory.openSession()) {
             return session.get(Cinema.class, id).getCafeBar();
+        } catch (NullPointerException e) {
+            System.out.println("No id: " + id);
+            return null;
+        }
+    }
+
+    public Advertising getAdvertising(long id) {
+        try (final Session session = factory.openSession()) {
+            return session.get(Cinema.class, id).getAdvertising();
+        } catch (NullPointerException e) {
+            System.out.println("No id: " + id);
+            return null;
+        }
+    }
+
+    public Contacts getContacts(long id) {
+        try (final Session session = factory.openSession()) {
+            return session.get(Cinema.class, id).getContacts();
+        } catch (NullPointerException e) {
+            System.out.println("No id: " + id);
+            return null;
+        }
+    }
+
+    public MobileApp getMobileApp(long id) {
+        try (final Session session = factory.openSession()) {
+            return session.get(Cinema.class, id).getMobileApp();
+        } catch (NullPointerException e) {
+            System.out.println("No id: " + id);
+            return null;
+        }
+    }
+
+    public ChildrensRoom getChildrensRoom(long id) {
+        try (final Session session = factory.openSession()) {
+            return session.get(Cinema.class, id).getChildrensRoom();
+        } catch (NullPointerException e) {
+            System.out.println("No id: " + id);
+            return null;
         }
     }
 

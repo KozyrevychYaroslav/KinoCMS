@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -33,4 +34,27 @@ public class FilmHall {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmHall", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CurrentFilmData> currentFilmsData;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FilmHall filmHall = (FilmHall) o;
+        return filmHallNumber == filmHall.filmHallNumber && info.equals(filmHall.info);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(filmHallNumber, info);
+    }
+
+    @Override
+    public String toString() {
+        return "FilmHall{" +
+                "id=" + id +
+                ", filmHallNumber=" + filmHallNumber +
+                ", info='" + info + '\'' +
+                ", cinema name ='" + cinema.getCinemaName() +
+                "\'}";
+    }
 }

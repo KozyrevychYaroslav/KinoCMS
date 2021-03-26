@@ -93,9 +93,6 @@ public class ImageTest {
 
         assertNull(cinemaDAO.get("Высоцкого"));
 
-        imageDAO.delete("Image name 1");
-
-        assertEquals(0, imageDAO.getAll().size());
     }
 
     @Test

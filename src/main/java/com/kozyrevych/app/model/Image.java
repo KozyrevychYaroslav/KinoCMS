@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -36,5 +37,18 @@ public class Image {
                 ", imageName='" + imageName + '\'' +
                 ", cinema name ='" + cinema.getCinemaName() +
                 "\'}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Image image = (Image) o;
+        return imagePath.equals(image.imagePath) && imageName.equals(image.imageName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(imagePath, imageName);
     }
 }

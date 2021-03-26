@@ -7,7 +7,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -33,17 +35,45 @@ public class User {
     @Size(max = 50, message = "Incorrect size")
     private String password = "";
 
-    @Temporal(TemporalType.DATE)
-    private Date birthday;
+    private LocalDate birthday;
 
     @Column(name = "registration_date")
-    @Temporal(TemporalType.DATE)
     @NotNull(message = "Empty date")
-    private Date registrationDate;
+    private LocalDate registrationDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FreePlace> freePlaces;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "CurrentFilmAndUser",
+            joinColumns = @JoinColumn(name = "usr_id"),
+            inverseJoinColumns = @JoinColumn(name = "current_film_data_id")
+    )
     private Set<CurrentFilmData> currentFilmsData;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return phoneNumber.equals(user.phoneNumber) && email.equals(user.email) && name.equals(user.name) && password.equals(user.password) && Objects.equals(birthday, user.birthday) && registrationDate.equals(user.registrationDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(phoneNumber, email, name, password, birthday, registrationDate);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", birthday=" + birthday +
+                ", registrationDate=" + registrationDate +
+                '}';
+    }
 }

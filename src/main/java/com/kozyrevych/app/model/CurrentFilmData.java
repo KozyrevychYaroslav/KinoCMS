@@ -8,7 +8,9 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -22,9 +24,8 @@ public class CurrentFilmData {
     private long id;
 
     @Column(name = "film_time")
-    @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "Empty date")
-    private Calendar filmTime;
+    private String filmTime;
 
     private boolean is3D;
     private boolean isVip;
@@ -42,12 +43,32 @@ public class CurrentFilmData {
     @JoinColumn(name = "film_data_id", nullable = false)
     private FilmData filmData;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "CurrentFilmAndUser",
-            joinColumns = @JoinColumn(name = "usr_id"),
-            inverseJoinColumns = @JoinColumn(name = "current_film_data_id")
-    )
+    @ManyToMany(mappedBy = "currentFilmsData", fetch = FetchType.LAZY)
     private Set<User> users;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CurrentFilmData that = (CurrentFilmData) o;
+        return is3D == that.is3D && isVip == that.isVip && isDBOX == that.isDBOX && Double.compare(that.price, price) == 0 && filmTime.equals(that.filmTime);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(filmTime, is3D, isVip, isDBOX, price);
+    }
+
+    @Override
+    public String toString() {
+        return "CurrentFilmData{" +
+                "id=" + id +
+                ", filmTime=" + filmTime +
+                ", is3D=" + is3D +
+                ", isVip=" + isVip +
+                ", isDBOX=" + isDBOX +
+                ", price=" + price +
+                ", film title ='" + filmData.getFilmTitle() +
+                "\'}";
+    }
 }

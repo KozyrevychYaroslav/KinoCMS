@@ -1,0 +1,98 @@
+package com.kozyrevych.app.dao;
+
+import com.kozyrevych.app.model.*;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+
+import javax.persistence.NoResultException;
+import java.util.List;
+import java.util.Set;
+
+public class FilmDataDAO {
+    private SessionFactory factory;
+
+    public FilmDataDAO(SessionFactory factory) {
+        this.factory = factory;
+    }
+
+    public void save(FilmData filmData) {
+        try (final Session session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.save(filmData);
+            transaction.commit();
+        }
+    }
+
+    public FilmData get(String title) {
+        try (final Session session = factory.openSession()) {
+            Query query = session.createQuery("from FilmData c where filmTitle =: title");
+            query.setParameter("title", title);
+            try {
+                return (FilmData) query.getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            }
+        }
+    }
+
+    public void update(FilmData filmData) {
+        try (final Session session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            try {
+                session.update(filmData);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Can't update filmData");
+            }
+            transaction.commit();
+        }
+    }
+
+    public void delete(String title) {
+        try (final Session session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            FilmData c = get(title);
+            try {
+                session.delete(c);
+            } catch(IllegalArgumentException e) {
+                System.out.println("No FilmData with title: " + title + " in database ");
+            }
+            transaction.commit();
+        }
+    }
+
+    public List<FilmData> getAll() {
+        try (final Session session = factory.openSession()) {
+            return session.createQuery("from FilmData", FilmData.class).getResultList();
+        }
+
+    }
+
+    public Set<Cinema> getCinemas(long id) {
+        try (final Session session = factory.openSession()) {
+            FilmData filmData = session.get(FilmData.class, id);
+            Hibernate.initialize(filmData.getCinemas());
+            return filmData.getCinemas();
+        } catch (NullPointerException e) {
+            System.out.println("No id: " + id);
+            return null;
+        }
+    }
+
+    public Set<CurrentFilmData> getCurrentFilmDatas(long id) {
+        try (final Session session = factory.openSession()) {
+            FilmData c = session.get(FilmData.class, id);
+            Hibernate.initialize(c.getCurrentFilmData());
+            return c.getCurrentFilmData();
+        } catch (NullPointerException e) {
+            System.out.println("No id: " + id);
+            return null;
+        }
+    }
+
+
+
+
+}

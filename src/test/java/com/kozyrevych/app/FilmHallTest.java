@@ -1,0 +1,129 @@
+package com.kozyrevych.app;
+
+import com.kozyrevych.app.dao.CinemaDAO;
+import com.kozyrevych.app.dao.FilmHallDAO;
+import com.kozyrevych.app.dao.FilmHallDAO;
+import com.kozyrevych.app.model.Cinema;
+import com.kozyrevych.app.model.FilmHall;
+import org.hibernate.SessionFactory;
+import org.junit.jupiter.api.*;
+
+import java.time.LocalDate;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class FilmHallTest {
+    private static SessionFactory sessionFactory = null;
+    private static FilmHallDAO filmHallDAO = null;
+    private static CinemaDAO cinemaDAO = null;
+
+    @BeforeAll
+    @DisplayName("Start session factory")
+    public static void configStart() {
+        sessionFactory = SessionFactoryUtil.getSessionFactory();
+        cinemaDAO = new CinemaDAO(sessionFactory);
+        filmHallDAO = new FilmHallDAO(sessionFactory);
+    }
+
+    @AfterAll
+    @DisplayName("close session factory")
+    public static void configEnd() {
+        SessionFactoryUtil.closeSessionFactory();
+    }
+
+    @Test
+    @DisplayName("Add and get data to filmHall table")
+    @Order(2)
+    public void m1() {
+        Cinema cinema = new Cinema();
+        FilmHall filmHall = new FilmHall();
+
+        cinema.setAddress("Высоцкого 50/б");
+        cinema.setCinemaName("Высоцкого");
+        cinema.setInfo("some info");
+        cinemaDAO.save(cinema);
+        filmHall.setCinema(cinema);
+        filmHall.setInfo("Film hall №1 info");
+        filmHall.setFilmHallNumber(10);
+        filmHallDAO.save(filmHall);
+
+        assertEquals(filmHall, filmHallDAO.get(10));
+    }
+
+    @Test
+    @DisplayName("Checked one to many relationship")
+    @Order(3)
+    public void m2() {
+        FilmHall filmHall = new FilmHall();
+
+        filmHall.setCinema(cinemaDAO.get("Высоцкого"));
+        filmHall.setInfo("Film hall №2 info");
+        filmHall.setFilmHallNumber(11);
+
+        filmHallDAO.save(filmHall);
+
+        assertEquals(Set.of(filmHallDAO.get(10), filmHall), cinemaDAO.getFilmHalls("Высоцкого"));
+    }
+
+
+    @Test
+    @DisplayName("Get all rows from filmHall table")
+    @Order(4)
+    public void m4() {
+        assertEquals(2, filmHallDAO.getAll().size());
+    }
+
+    @Test
+    @DisplayName("Delete data from filmHall table using Cinema and filmHall")
+    @Order(5)
+    public void m5() {
+        FilmHall filmHall = new FilmHall();
+        Cinema cinema = cinemaDAO.get("Высоцкого");
+
+        filmHall.setCinema(cinema);
+        filmHall.setInfo("Film hall №3 info");
+        filmHall.setFilmHallNumber(12);
+        filmHallDAO.save(filmHall);
+
+        assertEquals(3, filmHallDAO.getAll().size());
+
+        cinemaDAO.delete(cinema.getCinemaName());
+
+        assertEquals(0, cinemaDAO.getAll().size());
+
+        assertEquals(0, filmHallDAO.getAll().size(), "каскадное удаление не работает");
+
+        assertNull(cinemaDAO.get("Высоцкого"));
+    }
+
+    @Test
+    @DisplayName("update data in filmHall table")
+    @Order(6)
+    public void m6() {
+        Cinema cinema = new Cinema();
+        FilmHall filmHall = new FilmHall();
+
+        cinema.setAddress("Высоцкого 50/б");
+        cinema.setCinemaName("Высоцкого");
+        cinema.setInfo("some info");
+        cinemaDAO.save(cinema);
+        filmHall.setCinema(cinema);
+        filmHall.setInfo("Film hall №1 info");
+        filmHall.setFilmHallNumber(1);
+        filmHallDAO.save(filmHall);
+
+        filmHall.setFilmHallNumber(40);
+        filmHallDAO.update(filmHall);
+
+        assertEquals(filmHall, filmHallDAO.get(40));
+
+        filmHallDAO.delete(40);
+
+        assertNull(filmHallDAO.get(40));
+
+        assertNotNull(cinemaDAO.get("Высоцкого"));
+    }
+
+
+}

@@ -8,13 +8,9 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StockTest {
     private static SessionFactory sessionFactory = null;
@@ -101,10 +97,6 @@ public class StockTest {
         assertEquals(0, stockDAO.getAll().size(), "каскадное удаление не работает");
 
         assertNull(cinemaDAO.get("Высоцкого"));
-
-        stockDAO.delete("Акция №1");
-
-        assertEquals(0, stockDAO.getAll().size());
     }
 
     @Test

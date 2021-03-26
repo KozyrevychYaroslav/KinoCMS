@@ -1,17 +1,17 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CafeBarDAO;
+import com.kozyrevych.app.dao.ChildrensRoomDAO;
 import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.model.CafeBar;
+import com.kozyrevych.app.model.ChildrensRoom;
 import com.kozyrevych.app.model.Cinema;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CafeBarTest {
+public class ChildrensRoomTest {
     private static SessionFactory sessionFactory = null;
-    private static CafeBarDAO cafeBarDAO = null;
+    private static ChildrensRoomDAO childrensRoomDAO = null;
     private static CinemaDAO cinemaDAO = null;
 
     @BeforeAll
@@ -19,7 +19,7 @@ public class CafeBarTest {
     public static void configStart() {
         sessionFactory = SessionFactoryUtil.getSessionFactory();
         cinemaDAO = new CinemaDAO(sessionFactory);
-        cafeBarDAO = new CafeBarDAO(sessionFactory);
+        childrensRoomDAO = new ChildrensRoomDAO(sessionFactory);
     }
 
     @AfterAll
@@ -29,51 +29,51 @@ public class CafeBarTest {
     }
 
     @Test
-    @DisplayName("Add and get data to CafeBar table")
+    @DisplayName("Add and get data to childrensRoom table")
     @Order(2)
     public void m1() {
         Cinema cinema = new Cinema();
-        CafeBar cafeBar = new CafeBar();
+        ChildrensRoom childrensRoom = new ChildrensRoom();
 
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
         cinemaDAO.save(cinema);
-        cafeBar.setCinema(cinema);
-        cafeBar.setInfo("some info 1");
-        cafeBarDAO.save(cafeBar);
+        childrensRoom.setCinema(cinema);
+        childrensRoom.setInfo("some info 1");
+        childrensRoomDAO.save(childrensRoom);
 
-        assertEquals(cafeBar, cafeBarDAO.get(1));
+        assertEquals(childrensRoom, childrensRoomDAO.get(1));
     }
 
     @Test
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(cafeBarDAO.get(1), cinemaDAO.getCafeBar(1));
+        assertEquals(childrensRoomDAO.get(1), cinemaDAO.getChildrensRoom(1));
     }
 
     @Test
-    @DisplayName("Get all rows from cafe bar table")
+    @DisplayName("Get all rows from childrensRoom table")
     @Order(4)
     public void m4() {
         Cinema cinema = new Cinema();
-        CafeBar cafeBar = new CafeBar();
+        ChildrensRoom childrensRoom = new ChildrensRoom();
 
         cinema.setAddress("Бочароваа 20");
         cinema.setCinemaName("Бочарова");
         cinema.setInfo("some info");
         cinemaDAO.save(cinema);
-        cafeBar.setCinema(cinema);
-        cafeBar.setInfo("some info 2");
-        cafeBarDAO.save(cafeBar);
+        childrensRoom.setCinema(cinema);
+        childrensRoom.setInfo("some info 2");
+        childrensRoomDAO.save(childrensRoom);
 
-        assertEquals(2, cafeBarDAO.getAll().size());
+        assertEquals(2, childrensRoomDAO.getAll().size());
     }
 
 
     @Test
-    @DisplayName("Delete data from CafeBar table using Cinema and cafe")
+    @DisplayName("Delete data from childrensRoom table using Cinema and childrensRoom")
     @Order(5)
     public void m5() {
         assertEquals(2, cinemaDAO.getAll().size());
@@ -82,27 +82,27 @@ public class CafeBarTest {
 
         assertEquals(1, cinemaDAO.getAll().size());
 
-        assertEquals(1, cafeBarDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(1, childrensRoomDAO.getAll().size(), "каскадное удаление не работает");
 
         assertNull(cinemaDAO.get("Высоцкого"));
     }
 
     @Test
-    @DisplayName("update data in CafeBar table")
+    @DisplayName("update data in childrensRoom table")
     @Order(6)
     public void m6() {
-        CafeBar cafeBar = cafeBarDAO.get(2);
+        ChildrensRoom childrensRoom = childrensRoomDAO.get(2);
 
-        cafeBar.setInfo("UPDATED info");
-        cafeBarDAO.update(cafeBar);
+        childrensRoom.setInfo("UPDATED info");
+        childrensRoomDAO.update(childrensRoom);
 
-        assertEquals(cafeBar, cafeBarDAO.get(2));
+        assertEquals(childrensRoom, childrensRoomDAO.get(2));
 
-        cafeBarDAO.delete(2);
+        childrensRoomDAO.delete(2);
 
-        assertNull(cafeBarDAO.get(1));
+        assertNull(childrensRoomDAO.get(1));
 
-        assertNull(cafeBarDAO.get(3));
+        assertNull(childrensRoomDAO.get(3));
 
         assertNotNull(cinemaDAO.get("Бочарова"));
     }

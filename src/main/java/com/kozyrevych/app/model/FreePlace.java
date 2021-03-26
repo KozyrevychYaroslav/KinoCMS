@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -35,4 +36,27 @@ public class FreePlace {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usr_id")
     private User user;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FreePlace freePlace = (FreePlace) o;
+        return isBooked == freePlace.isBooked && placeNumber == freePlace.placeNumber && rowNumber == freePlace.rowNumber;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(isBooked, placeNumber, rowNumber);
+    }
+
+    @Override
+    public String toString() {
+        return "FreePlace{" +
+                "id=" + id +
+                ", isBooked=" + isBooked +
+                ", placeNumber=" + placeNumber +
+                ", rowNumber=" + rowNumber +
+                '}';
+    }
 }

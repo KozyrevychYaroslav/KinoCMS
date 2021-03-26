@@ -8,7 +8,9 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -24,13 +26,36 @@ public class News {
     private String newsTitle = "";
 
     @Column(name = "news_date")
-    @Temporal(TemporalType.DATE)
     @NotNull(message = "Empty date")
-    private Date date;
+    private LocalDate date;
 
     private String info = "";
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        News news = (News) o;
+        return newsTitle.equals(news.newsTitle) && date.equals(news.date) && info.equals(news.info);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(newsTitle, date, info);
+    }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "id=" + id +
+                ", newsTitle='" + newsTitle + '\'' +
+                ", date=" + date +
+                ", info='" + info + '\'' +
+                ", cinema name ='" + cinema.getCinemaName() +
+                "\'}";
+    }
 }

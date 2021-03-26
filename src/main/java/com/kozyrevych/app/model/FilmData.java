@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -45,7 +46,7 @@ public class FilmData {
     @Size(min = 2, max = 45, message = "Incorrect size")
     private String filmLength = "";
 
-    @Column(name = "filmTitle")
+    @Column(name = "film_title")
     @Size(min = 2, max = 200, message = "Incorrect size")
     private String filmTitle = "";
 
@@ -66,4 +67,36 @@ public class FilmData {
 
     @ManyToMany(mappedBy = "filmsData", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Cinema> cinemas;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FilmData filmData = (FilmData) o;
+        return year == filmData.year && budget == filmData.budget && minimumAge == filmData.minimumAge && country.equals(filmData.country) && director.equals(filmData.director) && composer.equals(filmData.composer) && producer.equals(filmData.producer) && operator.equals(filmData.operator) && genre.equals(filmData.genre) && filmLength.equals(filmData.filmLength) && filmTitle.equals(filmData.filmTitle) && filmDescription.equals(filmData.filmDescription);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(year, country, director, composer, producer, operator, genre, filmLength, filmTitle, budget, minimumAge, filmDescription);
+    }
+
+    @Override
+    public String toString() {
+        return "FilmData{" +
+                "id=" + id +
+                ", year=" + year +
+                ", country='" + country + '\'' +
+                ", director='" + director + '\'' +
+                ", composer='" + composer + '\'' +
+                ", producer='" + producer + '\'' +
+                ", operator='" + operator + '\'' +
+                ", genre='" + genre + '\'' +
+                ", filmLength='" + filmLength + '\'' +
+                ", filmTitle='" + filmTitle + '\'' +
+                ", budget=" + budget +
+                ", minimumAge=" + minimumAge +
+                ", filmDescription='" + filmDescription + '\'' +
+                '}';
+    }
 }
