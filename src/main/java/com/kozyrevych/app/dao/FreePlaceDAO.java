@@ -1,15 +1,11 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.*;
-import org.hibernate.Hibernate;
+import com.kozyrevych.app.model.FreePlace;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
-import javax.persistence.NoResultException;
 import java.util.List;
-import java.util.Set;
 
 public class FreePlaceDAO {
     private SessionFactory factory;

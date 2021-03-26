@@ -30,7 +30,7 @@ public class ImageDAO {
             Image c = get(name);
             try {
                 session.delete(c);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("No image name: " + name + " in database ");
             }
             transaction.commit();
@@ -42,7 +42,7 @@ public class ImageDAO {
             Transaction transaction = session.beginTransaction();
             try {
                 session.update(image);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Can't update image");
             }
             transaction.commit();
@@ -54,7 +54,7 @@ public class ImageDAO {
             Query query = session.createQuery("from Image c where imageName =: name");
             query.setParameter("name", name);
             try {
-                return (Image)query.getSingleResult();
+                return (Image) query.getSingleResult();
             } catch (NoResultException e) {
                 return null;
             }

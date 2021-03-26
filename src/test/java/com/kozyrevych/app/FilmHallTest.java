@@ -2,13 +2,11 @@ package com.kozyrevych.app;
 
 import com.kozyrevych.app.dao.CinemaDAO;
 import com.kozyrevych.app.dao.FilmHallDAO;
-import com.kozyrevych.app.dao.FilmHallDAO;
 import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.FilmHall;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;

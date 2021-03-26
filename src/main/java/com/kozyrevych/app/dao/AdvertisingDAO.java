@@ -1,13 +1,10 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.*;
-import org.hibernate.Hibernate;
+import com.kozyrevych.app.model.Advertising;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
-import javax.persistence.NoResultException;
 import java.util.List;
 
 public class AdvertisingDAO {
@@ -31,7 +28,7 @@ public class AdvertisingDAO {
             Advertising c = get(id);
             try {
                 session.delete(c);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("No advertising with id: " + id + " in database ");
             }
             transaction.commit();
@@ -43,7 +40,7 @@ public class AdvertisingDAO {
             Transaction transaction = session.beginTransaction();
             try {
                 session.update(advertising);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Can't update cafe bar");
             }
             transaction.commit();

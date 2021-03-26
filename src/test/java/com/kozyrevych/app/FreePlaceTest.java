@@ -1,20 +1,17 @@
 package com.kozyrevych.app;
 
 import com.kozyrevych.app.dao.CinemaDAO;
+import com.kozyrevych.app.dao.FilmHallDAO;
 import com.kozyrevych.app.dao.FreePlaceDAO;
 import com.kozyrevych.app.dao.UserDAO;
-import com.kozyrevych.app.dao.UserDAO;
-import com.kozyrevych.app.dao.FilmHallDAO;
 import com.kozyrevych.app.model.Cinema;
+import com.kozyrevych.app.model.FilmHall;
 import com.kozyrevych.app.model.FreePlace;
 import com.kozyrevych.app.model.User;
-import com.kozyrevych.app.model.FilmHall;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,7 +58,7 @@ public class FreePlaceTest {
         User user = new User();
         FreePlace freePlace = new FreePlace();
 
-        user.setBirthday(LocalDate.of(2001,6,15));
+        user.setBirthday(LocalDate.of(2001, 6, 15));
         user.setEmail("user1@mailru");
         user.setName("name 1");
         user.setPassword("password 1");
@@ -140,7 +137,7 @@ public class FreePlaceTest {
         User user = new User();
         FreePlace freePlace = new FreePlace();
 
-        user.setBirthday(LocalDate.of(2000,4,15));
+        user.setBirthday(LocalDate.of(2000, 4, 15));
         user.setEmail("user2@mailru");
         user.setName("name 2");
         user.setPassword("password 2");

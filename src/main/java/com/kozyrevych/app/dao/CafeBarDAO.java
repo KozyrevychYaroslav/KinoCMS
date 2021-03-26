@@ -1,16 +1,10 @@
 package com.kozyrevych.app.dao;
 
 import com.kozyrevych.app.model.CafeBar;
-import com.kozyrevych.app.model.Cinema;
-import com.kozyrevych.app.model.Image;
-import com.kozyrevych.app.model.Stock;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
-import javax.persistence.NoResultException;
 import java.util.List;
 
 public class CafeBarDAO {
@@ -34,7 +28,7 @@ public class CafeBarDAO {
             CafeBar c = get(id);
             try {
                 session.delete(c);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("No cafe bar with id: " + id + " in database ");
             }
             transaction.commit();
@@ -46,7 +40,7 @@ public class CafeBarDAO {
             Transaction transaction = session.beginTransaction();
             try {
                 session.update(cafeBar);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Can't update cafe bar");
             }
             transaction.commit();

@@ -2,14 +2,11 @@ package com.kozyrevych.app.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.bytebuddy.dynamic.TypeResolutionStrategy;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Objects;
 import java.util.Set;
 

@@ -1,6 +1,8 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.*;
+import com.kozyrevych.app.model.CurrentFilmData;
+import com.kozyrevych.app.model.FilmHall;
+import com.kozyrevych.app.model.FreePlace;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -32,7 +34,7 @@ public class FilmHallDAO {
             FilmHall c = get(filmHallNumber);
             try {
                 session.delete(c);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("No FilmHall with number: " + filmHallNumber + " in database ");
             }
             transaction.commit();
@@ -44,7 +46,7 @@ public class FilmHallDAO {
             Transaction transaction = session.beginTransaction();
             try {
                 session.update(filmHall);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Can't update FilmHall");
             }
             transaction.commit();

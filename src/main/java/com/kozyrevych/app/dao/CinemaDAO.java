@@ -152,7 +152,7 @@ public class CinemaDAO {
             Transaction transaction = session.beginTransaction();
             try {
                 session.update(cinema);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Can't update cinema");
             }
             transaction.commit();
@@ -165,7 +165,7 @@ public class CinemaDAO {
             Cinema c = get(name);
             try {
                 session.delete(c);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("No cinema name: " + name + " in database ");
             }
             transaction.commit();

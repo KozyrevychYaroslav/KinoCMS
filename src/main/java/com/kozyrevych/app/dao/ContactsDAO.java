@@ -1,13 +1,10 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.*;
-import org.hibernate.Hibernate;
+import com.kozyrevych.app.model.Contacts;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
-import javax.persistence.NoResultException;
 import java.util.List;
 
 public class ContactsDAO {
@@ -31,7 +28,7 @@ public class ContactsDAO {
             Contacts c = get(id);
             try {
                 session.delete(c);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("No contacts with id: " + id + " in database ");
             }
             transaction.commit();
@@ -43,7 +40,7 @@ public class ContactsDAO {
             Transaction transaction = session.beginTransaction();
             try {
                 session.update(contacts);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Can't update contacts");
             }
             transaction.commit();

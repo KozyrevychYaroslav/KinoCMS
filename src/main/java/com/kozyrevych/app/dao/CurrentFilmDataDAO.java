@@ -1,13 +1,12 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.*;
+import com.kozyrevych.app.model.CurrentFilmData;
+import com.kozyrevych.app.model.User;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
-import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Set;
 

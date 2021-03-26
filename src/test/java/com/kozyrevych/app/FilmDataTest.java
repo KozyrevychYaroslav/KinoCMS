@@ -7,7 +7,10 @@ import com.kozyrevych.app.model.FilmData;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

@@ -1,6 +1,8 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.*;
+import com.kozyrevych.app.model.Cinema;
+import com.kozyrevych.app.model.CurrentFilmData;
+import com.kozyrevych.app.model.FilmData;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

@@ -1,8 +1,6 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.Stock;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -32,7 +30,7 @@ public class StockDAO {
             Stock c = get(name);
             try {
                 session.delete(c);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("No stock name: " + name + " in database ");
             }
             transaction.commit();
@@ -44,7 +42,7 @@ public class StockDAO {
             Transaction transaction = session.beginTransaction();
             try {
                 session.update(stock);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Can't update stock");
             }
             transaction.commit();
