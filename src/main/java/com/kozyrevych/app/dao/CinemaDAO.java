@@ -20,9 +20,6 @@ public class CinemaDAO {
     }
 
     public void save(Cinema cinema) {
-        //если попытаться добавить обьект, первичный ключ которого уже существует, он все равно именно добавится, а не
-        //заапдэйтится, а в значении первичного ключа станет последнее значение + 1 (как обычно при добавлении нового обьекта)
-        //. Есть удобный метод saveOrUpdate (который создаст если нету, и заапдеэйтит если есть)
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.save(cinema);
@@ -30,10 +27,10 @@ public class CinemaDAO {
         }
     }
 
-    public Cinema get(String name) {
+    public Cinema get(String title) {
         try (final Session session = factory.openSession()) {
-            Query query = session.createQuery("select c from Cinema c where cinemaName =: name");
-            query.setParameter("name", name);
+            Query query = session.createQuery("select c from Cinema c where cinemaName =: title");
+            query.setParameter("title", title);
             try {
                 return (Cinema) query.getSingleResult();
             } catch (NoResultException e) {
@@ -78,16 +75,16 @@ public class CinemaDAO {
         }
     }
 
-    public Set<FilmData> getFilmsData(long id) {
+    public int getNumberOfSelectedFilmData(String title) {
         try (final Session session = factory.openSession()) {
-            Cinema c = session.get(Cinema.class, id);
-            Hibernate.initialize(c.getFilmsData());
-            return c.getFilmsData();
+            Query query = session.createQuery("Select c  from Cinema c " +
+                    "join c.filmsData fd where fd.filmTitle =: title");
+            query.setParameter("title", title);
+            return query.getResultList().size();
         } catch (NullPointerException e) {
-            System.out.println("no id: " + id);
-            return null;
+            System.out.println("no title: " + title);
+            return -1;
         }
-
     }
 
     public Set<Image> getImages(String name) {
@@ -102,47 +99,47 @@ public class CinemaDAO {
         }
     }
 
-    public CafeBar getCafeBar(long id) {
+    public CafeBar getCafeBar(String name) {
         try (final Session session = factory.openSession()) {
-            return session.get(Cinema.class, id).getCafeBar();
+            return get(name).getCafeBar();
         } catch (NullPointerException e) {
-            System.out.println("No id: " + id);
+            System.out.println("No name: " + name);
             return null;
         }
     }
 
-    public Advertising getAdvertising(long id) {
+    public Advertising getAdvertising(String name) {
         try (final Session session = factory.openSession()) {
-            return session.get(Cinema.class, id).getAdvertising();
+            return get(name).getAdvertising();
         } catch (NullPointerException e) {
-            System.out.println("No id: " + id);
+            System.out.println("No name: " + name);
             return null;
         }
     }
 
-    public Contacts getContacts(long id) {
+    public Contacts getContacts(String name) {
         try (final Session session = factory.openSession()) {
-            return session.get(Cinema.class, id).getContacts();
+            return get(name).getContacts();
         } catch (NullPointerException e) {
-            System.out.println("No id: " + id);
+            System.out.println("No name: " + name);
             return null;
         }
     }
 
-    public MobileApp getMobileApp(long id) {
+    public MobileApp getMobileApp(String name) {
         try (final Session session = factory.openSession()) {
-            return session.get(Cinema.class, id).getMobileApp();
+            return get(name).getMobileApp();
         } catch (NullPointerException e) {
-            System.out.println("No id: " + id);
+            System.out.println("No name: " + name);
             return null;
         }
     }
 
-    public ChildrensRoom getChildrensRoom(long id) {
+    public ChildrensRoom getChildrensRoom(String name) {
         try (final Session session = factory.openSession()) {
-            return session.get(Cinema.class, id).getChildrensRoom();
+            return get(name).getChildrensRoom();
         } catch (NullPointerException e) {
-            System.out.println("No id: " + id);
+            System.out.println("No name: " + name);
             return null;
         }
     }

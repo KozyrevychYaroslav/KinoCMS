@@ -35,13 +35,13 @@ public class AdvertisingTest {
         Cinema cinema = new Cinema();
         Advertising advertising = new Advertising();
 
+        advertising.setInfo("some info 1");
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
         advertising.setCinema(cinema);
-        advertising.setInfo("some info 1");
-        advertisingDAO.save(advertising);
+        cinema.setAdvertising(advertising);
+        cinemaDAO.save(cinema);
 
         assertEquals(advertising, advertisingDAO.get(1));
     }
@@ -50,7 +50,7 @@ public class AdvertisingTest {
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(advertisingDAO.get(1), cinemaDAO.getAdvertising(1));
+        assertEquals(advertisingDAO.get(1), cinemaDAO.getAdvertising("Высоцкого"));
     }
 
     @Test
@@ -60,13 +60,13 @@ public class AdvertisingTest {
         Cinema cinema = new Cinema();
         Advertising advertising = new Advertising();
 
+        advertising.setInfo("some info 2");
         cinema.setAddress("Бочароваа 20");
         cinema.setCinemaName("Бочарова");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+        cinema.setAdvertising(advertising);
         advertising.setCinema(cinema);
-        advertising.setInfo("some info 2");
-        advertisingDAO.save(advertising);
+        cinemaDAO.save(cinema);
 
         assertEquals(2, advertisingDAO.getAll().size());
     }

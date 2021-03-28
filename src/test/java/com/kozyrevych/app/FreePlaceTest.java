@@ -12,6 +12,7 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,18 +46,18 @@ public class FreePlaceTest {
     public void m1() {
         Cinema cinema = new Cinema();
         FilmHall filmHall = new FilmHall();
+        User user = new User();
+        FreePlace freePlace = new FreePlace();
 
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+
         filmHall.setCinema(cinema);
         filmHall.setInfo("Film hall №1 info");
         filmHall.setFilmHallNumber(10);
-        filmHallDAO.save(filmHall);
-
-        User user = new User();
-        FreePlace freePlace = new FreePlace();
+        cinema.setFilmHalls(Collections.singleton(filmHall));
+        cinemaDAO.save(cinema);
 
         user.setBirthday(LocalDate.of(2001, 6, 15));
         user.setEmail("user1@mailru");
@@ -64,14 +65,14 @@ public class FreePlaceTest {
         user.setPassword("password 1");
         user.setPhoneNumber("+380677157636");
         user.setRegistrationDate(LocalDate.now());
-        userDAO.save(user);
 
         freePlace.setPlaceNumber(12);
         freePlace.setBooked(true);
         freePlace.setRowNumber(2);
         freePlace.setFilmHall(filmHall);
         freePlace.setUser(user);
-        freePlaceDAO.save(freePlace);
+        user.setFreePlaces(Collections.singleton(freePlace));
+        userDAO.save(user);
 
         assertEquals(freePlace, freePlaceDAO.get(1));
     }
@@ -91,7 +92,7 @@ public class FreePlaceTest {
         freePlace.setUser(userDAO.get("+380677157636"));
         freePlaceDAO.save(freePlace);
 
-        assertEquals(Set.of(freePlaceDAO.get(1), freePlace), userDAO.getFreePlaces(1));
+        assertEquals(Set.of(freePlaceDAO.get(1), freePlace), userDAO.getFreePlaces("+380677157636"));
         assertEquals(Set.of(freePlaceDAO.get(1), freePlace), filmHallDAO.getFreePlaces(1));
     }
 
@@ -101,7 +102,7 @@ public class FreePlaceTest {
     @Order(4)
     public void m4() {
         assertEquals(2, freePlaceDAO.getAll().size());
-        assertEquals(2, userDAO.getFreePlaces(1).size());
+        assertEquals(2, userDAO.getFreePlaces("+380677157636").size());
         assertEquals(2, filmHallDAO.getFreePlaces(1).size());
     }
 
@@ -143,14 +144,15 @@ public class FreePlaceTest {
         user.setPassword("password 2");
         user.setPhoneNumber("+380677157655");
         user.setRegistrationDate(LocalDate.now());
-        userDAO.save(user);
+
 
         freePlace.setPlaceNumber(12);
         freePlace.setBooked(true);
         freePlace.setRowNumber(2);
         freePlace.setFilmHall(filmHallDAO.get(10));
         freePlace.setUser(userDAO.get("+380677157655"));
-        freePlaceDAO.save(freePlace);
+        user.setFreePlaces(Collections.singleton(freePlace));
+        userDAO.save(user);
 
         freePlace.setPlaceNumber(20);
         freePlaceDAO.update(freePlace);

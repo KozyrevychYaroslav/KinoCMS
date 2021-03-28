@@ -56,10 +56,16 @@ public class FilmDataDAO {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             FilmData c = get(title);
+            c = session.get(FilmData.class, c.getId());
+
+            // так как FilmData является главной таблицей в связи manyToMany, а мы решили удалить элемент из нее,
+            // то сначала надо очистить все ссылки на нее из таблицы Cinema
+            c.removeFilmDataFromCinemas();
             try {
                 session.delete(c);
             } catch(IllegalArgumentException e) {
                 System.out.println("No FilmData with title: " + title + " in database ");
+                transaction.rollback();
             }
             transaction.commit();
         }
@@ -93,8 +99,4 @@ public class FilmDataDAO {
             return null;
         }
     }
-
-
-
-
 }

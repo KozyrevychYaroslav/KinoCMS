@@ -7,6 +7,7 @@ import com.kozyrevych.app.model.Image;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,11 +41,12 @@ public class ImageTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+
         image.setCinema(cinema);
         image.setImageName("Image name 1");
         image.setImagePath("com/kozyrevych/app");
-        imageDAO.save(image);
+        cinema.setImages(Collections.singleton(image));
+        cinemaDAO.save(cinema);
 
         assertEquals(image, imageDAO.get("Image name 1"));
     }
@@ -105,11 +107,12 @@ public class ImageTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+
         image.setCinema(cinema);
         image.setImageName("Image name 1");
         image.setImagePath("com/kozyrevych/app");
-        imageDAO.save(image);
+        cinema.setImages(Collections.singleton(image));
+        cinemaDAO.save(cinema);
 
         image.setImageName("UPDATED name");
         imageDAO.update(image);

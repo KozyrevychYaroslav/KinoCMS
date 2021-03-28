@@ -1,18 +1,14 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.dao.CurrentFilmDataDAO;
-import com.kozyrevych.app.dao.FilmDataDAO;
-import com.kozyrevych.app.dao.FilmHallDAO;
-import com.kozyrevych.app.model.Cinema;
-import com.kozyrevych.app.model.CurrentFilmData;
-import com.kozyrevych.app.model.FilmData;
-import com.kozyrevych.app.model.FilmHall;
+import com.kozyrevych.app.dao.*;
+import com.kozyrevych.app.model.*;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,18 +42,17 @@ public class CurrentFilmDataTest {
     public void m1() {
         Cinema cinema = new Cinema();
         FilmHall filmHall = new FilmHall();
+        FilmData filmData = new FilmData();
+        CurrentFilmData currentFilmData = new CurrentFilmData();
 
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
         filmHall.setCinema(cinema);
         filmHall.setInfo("Film hall №1 info");
         filmHall.setFilmHallNumber(10);
-        filmHallDAO.save(filmHall);
-
-        FilmData filmData = new FilmData();
-        CurrentFilmData currentFilmData = new CurrentFilmData();
+        filmHall.setCinema(cinema);
+        cinema.setFilmHalls(Collections.singleton(filmHall));
 
         filmData.setBudget(125_000);
         filmData.setFilmTitle("Film title #1");
@@ -71,7 +66,7 @@ public class CurrentFilmDataTest {
         filmData.setProducer("Producer #1");
         filmData.setOperator("Operator #1");
         filmData.setYear(2021);
-        filmDataDAO.save(filmData);
+        cinema.setFilmsData(Collections.singleton(filmData));
 
         currentFilmData.setFilmTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
         currentFilmData.setDBOX(true);
@@ -81,7 +76,10 @@ public class CurrentFilmDataTest {
         currentFilmData.setVip(true);
         currentFilmData.setFilmData(filmData);
         currentFilmData.setFilmHall(filmHall);
-        currentFilmDataDAO.save(currentFilmData);
+
+        filmHall.setCurrentFilmsData(Collections.singleton(currentFilmData));
+
+        cinemaDAO.save(cinema);
 
         assertEquals(currentFilmData, currentFilmDataDAO.get(1));
     }
@@ -166,7 +164,6 @@ public class CurrentFilmDataTest {
         filmData.setProducer("Producer #1");
         filmData.setOperator("Operator #1");
         filmData.setYear(2021);
-        filmDataDAO.save(filmData);
 
         currentFilmData.setFilmTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
         currentFilmData.setDBOX(true);
@@ -176,7 +173,8 @@ public class CurrentFilmDataTest {
         currentFilmData.setVip(true);
         currentFilmData.setFilmData(filmData);
         currentFilmData.setFilmHall(filmHallDAO.get(10));
-        currentFilmDataDAO.save(currentFilmData);
+        filmData.setCurrentFilmData(Collections.singleton(currentFilmData));
+        filmDataDAO.save(filmData);
 
         currentFilmData.setPrice(123);
         currentFilmDataDAO.update(currentFilmData);

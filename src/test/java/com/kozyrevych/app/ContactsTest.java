@@ -38,10 +38,11 @@ public class ContactsTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
         contacts.setCinema(cinema);
         contacts.setInfo("some info 1");
-        contactsDAO.save(contacts);
+        contacts.setCinema(cinema);
+        cinema.setContacts(contacts);
+        cinemaDAO.save(cinema);
 
         assertEquals(contacts, contactsDAO.get(1));
     }
@@ -50,7 +51,7 @@ public class ContactsTest {
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(contactsDAO.get(1), cinemaDAO.getContacts(1));
+        assertEquals(contactsDAO.get(1), cinemaDAO.getContacts("Высоцкого"));
     }
 
     @Test
@@ -63,10 +64,10 @@ public class ContactsTest {
         cinema.setAddress("Бочароваа 20");
         cinema.setCinemaName("Бочарова");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
-        contacts.setCinema(cinema);
         contacts.setInfo("some info 2");
-        contactsDAO.save(contacts);
+        contacts.setCinema(cinema);
+        cinema.setContacts(contacts);
+        cinemaDAO.save(cinema);
 
         assertEquals(2, contactsDAO.getAll().size());
     }

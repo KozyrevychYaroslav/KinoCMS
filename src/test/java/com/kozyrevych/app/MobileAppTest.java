@@ -7,6 +7,8 @@ import com.kozyrevych.app.model.MobileApp;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MobileAppTest {
@@ -38,10 +40,11 @@ public class MobileAppTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+
         mobileApp.setCinema(cinema);
         mobileApp.setInfo("some info 1");
-        mobileAppDAO.save(mobileApp);
+        cinema.setMobileApp(mobileApp);
+        cinemaDAO.save(cinema);
 
         assertEquals(mobileApp, mobileAppDAO.get(1));
     }
@@ -50,7 +53,7 @@ public class MobileAppTest {
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(mobileAppDAO.get(1), cinemaDAO.getMobileApp(1));
+        assertEquals(mobileAppDAO.get(1), cinemaDAO.getMobileApp("Высоцкого"));
     }
 
     @Test
@@ -63,10 +66,11 @@ public class MobileAppTest {
         cinema.setAddress("Бочароваа 20");
         cinema.setCinemaName("Бочарова");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+
         mobileApp.setCinema(cinema);
         mobileApp.setInfo("some info 2");
-        mobileAppDAO.save(mobileApp);
+        cinema.setMobileApp(mobileApp);
+        cinemaDAO.save(cinema);
 
         assertEquals(2, mobileAppDAO.getAll().size());
     }

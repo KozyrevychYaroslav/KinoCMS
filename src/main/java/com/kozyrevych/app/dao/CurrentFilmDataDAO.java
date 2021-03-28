@@ -46,11 +46,17 @@ public class CurrentFilmDataDAO {
     public void delete(long id) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            CurrentFilmData c = get(id);
+            CurrentFilmData c = session.get(CurrentFilmData.class, id);
+
+            // так как currentFilmData является главной таблицей в связи manyToMany, а мы решили удалить элемент из нее,
+            // то сначала надо очистить все ссылки на нее из таблицы User
+            c.removeCurrentFilmDataFromUsers();
+
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
                 System.out.println("No CurrentFilmData with id: " + id + " in database ");
+                transaction.rollback();
             }
             transaction.commit();
         }

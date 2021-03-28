@@ -2,6 +2,7 @@ package com.kozyrevych.app.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -65,8 +66,14 @@ public class FilmData {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmData", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CurrentFilmData> currentFilmData;
 
-    @ManyToMany(mappedBy = "filmsData", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "filmsData", fetch = FetchType.LAZY)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Set<Cinema> cinemas;
+
+    @PreRemove
+    public void removeFilmDataFromCinemas() {
+        cinemas.forEach(c -> c.removeFilmData(this));
+    }
 
     @Override
     public boolean equals(Object o) {

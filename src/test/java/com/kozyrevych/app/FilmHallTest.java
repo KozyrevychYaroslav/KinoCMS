@@ -7,6 +7,7 @@ import com.kozyrevych.app.model.FilmHall;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,11 +41,11 @@ public class FilmHallTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
         filmHall.setCinema(cinema);
         filmHall.setInfo("Film hall №1 info");
         filmHall.setFilmHallNumber(10);
-        filmHallDAO.save(filmHall);
+        cinema.setFilmHalls(Collections.singleton(filmHall));
+        cinemaDAO.save(cinema);
 
         assertEquals(filmHall, filmHallDAO.get(10));
     }
@@ -105,11 +106,12 @@ public class FilmHallTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+
         filmHall.setCinema(cinema);
         filmHall.setInfo("Film hall №1 info");
         filmHall.setFilmHallNumber(1);
-        filmHallDAO.save(filmHall);
+        cinema.setFilmHalls(Collections.singleton(filmHall));
+        cinemaDAO.save(cinema);
 
         filmHall.setFilmHallNumber(40);
         filmHallDAO.update(filmHall);

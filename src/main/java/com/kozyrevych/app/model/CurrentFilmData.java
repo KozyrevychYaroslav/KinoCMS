@@ -2,6 +2,8 @@ package com.kozyrevych.app.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
@@ -41,7 +43,14 @@ public class CurrentFilmData {
     private FilmData filmData;
 
     @ManyToMany(mappedBy = "currentFilmsData", fetch = FetchType.LAZY)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Set<User> users;
+
+    @PreRemove
+    public void removeCurrentFilmDataFromUsers() {
+        users.forEach(u -> u.removeCurrentFilmData(this));
+    }
+
 
     @Override
     public boolean equals(Object o) {

@@ -7,10 +7,7 @@ import com.kozyrevych.app.model.FilmData;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -83,6 +80,7 @@ public class FilmDataTest {
     @Order(4)
     public void m3() {
         FilmData filmData = new FilmData();
+        FilmData filmData1 = new FilmData();
 
         filmData.setBudget(125_000);
         filmData.setFilmTitle("Film title #2");
@@ -100,8 +98,6 @@ public class FilmDataTest {
         filmDataDAO.save(filmData);
 
         assertEquals(filmData, filmDataDAO.get("Film title #2"));
-
-        FilmData filmData1 = new FilmData();
 
         filmData1.setBudget(125_000);
         filmData1.setFilmTitle("Film title #1");
@@ -185,51 +181,53 @@ public class FilmDataTest {
     public void m6() {
         FilmData filmData = filmDataDAO.get("Film title #1 changed");
         Cinema cinema = new Cinema();
+        Cinema cinema1 = new Cinema();
 
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
-
-        Cinema cinema1 = new Cinema();
 
         cinema1.setAddress("Бочарова 60");
         cinema1.setCinemaName("Бочарова");
         cinema1.setInfo("some info2");
-        cinemaDAO.save(cinema1);
 
         cinema.setFilmsData(Collections.singleton(filmData));
-        cinema1.setFilmsData(Collections.singleton(filmData));
-        cinemaDAO.update(cinema);
-        cinemaDAO.update(cinema1);
+        cinema1.setFilmsData(new LinkedHashSet<>(Arrays.asList(filmData, filmDataDAO.get("Film title #2"))));
+        cinemaDAO.save(cinema);
+        cinemaDAO.save(cinema1);
 
         assertEquals(Set.of(cinema, cinema1), filmDataDAO.getCinemas(1));
 
-        //у cinema с title = "Film title #1" всего один filmData
-        assertEquals("[" + filmDataDAO.get("Film title #1 changed") + "]", cinemaDAO.getFilmsData(1).toString());
+        //film title #1 changed показывается в двух кинотетарах
+        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #1 changed"));
 
-        //у cinema с title = "Film title #2" всего один filmData
-        assertEquals("[" + filmDataDAO.get("Film title #1 changed") + "]", cinemaDAO.getFilmsData(2).toString());
+        //film title #2 показывается  в одном кинотеатре
+        assertEquals(1, cinemaDAO.getNumberOfSelectedFilmData("Film title #2"));
 
         // cinema теперь имеет несколько filmData
         cinema.setFilmsData(new HashSet<>(Arrays.asList(filmDataDAO.get("Film title #1 changed"), filmDataDAO.get("Film title #2"))));
         cinemaDAO.update(cinema);
 
-        assertEquals(Set.of(filmDataDAO.get("Film title #1 changed"), filmDataDAO.get("Film title #2")), cinemaDAO.getFilmsData(1));
+        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #1 changed"));
 
-        assertEquals("[" + filmDataDAO.get("Film title #1 changed") + "]", cinemaDAO.getFilmsData(2).toString());
+        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #2"));
     }
 
     @Test
     @DisplayName("Testing many to many deletion")
     @Order(8)
     public void m7() {
-        assertEquals(1, cinemaDAO.getFilmsData(2).size());
+        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #1 changed"));
 
-        cinemaDAO.delete("Бочарова");
+        filmDataDAO.delete("Film title #1 changed");
 
-        //после удаления фильма, в кинотеатре  не должно его остаться
-        assertNull(cinemaDAO.getFilmsData(2));
+        assertEquals(0, cinemaDAO.getNumberOfSelectedFilmData("Film title #1 changed"));
+
+        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #2"));
+
+        filmDataDAO.delete("Film title #2");
+
+        assertEquals(0, cinemaDAO.getNumberOfSelectedFilmData("Film title #2"));
     }
 
 }

@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,12 +42,13 @@ public class NewsTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+
         news.setCinema(cinema);
         news.setInfo("новость №1 info");
         news.setDate(LocalDate.now());
         news.setNewsTitle("Новость №1");
-        newsDAO.save(news);
+        cinema.setNews(Collections.singleton(news));
+        cinemaDAO.save(cinema);
 
         assertEquals(news, newsDAO.get("Новость №1"));
     }
@@ -109,12 +111,13 @@ public class NewsTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+
         news.setCinema(cinema);
         news.setInfo("Новость №1 info");
         news.setDate(LocalDate.now());
         news.setNewsTitle("Новость №1");
-        newsDAO.save(news);
+        cinema.setNews(Collections.singleton(news));
+        cinemaDAO.save(cinema);
 
         news.setNewsTitle("UPDATED name");
         newsDAO.update(news);

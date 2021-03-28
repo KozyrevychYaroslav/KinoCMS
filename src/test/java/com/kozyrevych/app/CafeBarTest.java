@@ -38,10 +38,11 @@ public class CafeBarTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
         cafeBar.setCinema(cinema);
         cafeBar.setInfo("some info 1");
-        cafeBarDAO.save(cafeBar);
+        cafeBar.setCinema(cinema);
+        cinema.setCafeBar(cafeBar);
+        cinemaDAO.save(cinema);
 
         assertEquals(cafeBar, cafeBarDAO.get(1));
     }
@@ -50,7 +51,7 @@ public class CafeBarTest {
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(cafeBarDAO.get(1), cinemaDAO.getCafeBar(1));
+        assertEquals(cafeBarDAO.get(1), cinemaDAO.getCafeBar("Высоцкого"));
     }
 
     @Test
@@ -60,20 +61,20 @@ public class CafeBarTest {
         Cinema cinema = new Cinema();
         CafeBar cafeBar = new CafeBar();
 
+        cafeBar.setCinema(cinema);
+        cafeBar.setInfo("some info 2");
         cinema.setAddress("Бочароваа 20");
         cinema.setCinemaName("Бочарова");
         cinema.setInfo("some info");
+        cinema.setCafeBar(cafeBar);
         cinemaDAO.save(cinema);
-        cafeBar.setCinema(cinema);
-        cafeBar.setInfo("some info 2");
-        cafeBarDAO.save(cafeBar);
 
         assertEquals(2, cafeBarDAO.getAll().size());
     }
 
 
     @Test
-    @DisplayName("Delete data from CafeBar table using Cinema and cafe")
+    @DisplayName("Delete data from CafeBar table using Cinema and cafeBar")
     @Order(5)
     public void m5() {
         assertEquals(2, cinemaDAO.getAll().size());

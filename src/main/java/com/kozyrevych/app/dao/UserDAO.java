@@ -71,24 +71,26 @@ public class UserDAO {
         }
     }
 
-    public Set<CurrentFilmData> getCurrentFilmDatas(long id) {
+    public Set<CurrentFilmData> getCurrentFilmDatas(String phoneNumber) {
         try (final Session session = factory.openSession()) {
-            User c = session.get(User.class, id);
+            User c = get(phoneNumber);
+            c = session.get(User.class, c.getId());
             Hibernate.initialize(c.getCurrentFilmsData());
             return c.getCurrentFilmsData();
         } catch (NullPointerException e) {
-            System.out.println("No id: " + id);
+            System.out.println("No phoneNumber: " + phoneNumber);
             return null;
         }
     }
 
-    public Set<FreePlace> getFreePlaces(long id) {
+    public Set<FreePlace> getFreePlaces(String phoneNumber) {
         try (final Session session = factory.openSession()) {
-            User c = session.get(User.class, id);
+            User c = get(phoneNumber);
+            c = session.get(User.class, c.getId());
             Hibernate.initialize(c.getFreePlaces());
             return c.getFreePlaces();
         } catch (NullPointerException e) {
-            System.out.println("No id: " + id);
+            System.out.println("No phoneNumber: " + phoneNumber);
             return null;
         }
     }

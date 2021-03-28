@@ -2,6 +2,7 @@ package com.kozyrevych.app.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -32,6 +33,7 @@ public class User {
     private String name = "";
 
     @Size(max = 50, message = "Incorrect size")
+    @NotNull
     private String password = "";
 
     private LocalDate birthday;
@@ -44,6 +46,7 @@ public class User {
     private Set<FreePlace> freePlaces;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JoinTable(name = "CurrentFilmAndUser",
             joinColumns = @JoinColumn(name = "usr_id"),
             inverseJoinColumns = @JoinColumn(name = "current_film_data_id")
@@ -74,5 +77,9 @@ public class User {
                 ", birthday=" + birthday +
                 ", registrationDate=" + registrationDate +
                 '}';
+    }
+
+    public void removeCurrentFilmData(CurrentFilmData currentFilmData) {
+        currentFilmsData.removeIf(o -> o.getId() == currentFilmData.getId());
     }
 }

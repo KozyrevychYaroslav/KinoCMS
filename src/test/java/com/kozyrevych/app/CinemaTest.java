@@ -106,6 +106,6 @@ public class CinemaTest {
         cinema1.setInfo("some info changed");
         cinemaDAO.update(cinema1);
 
-        assertEquals(cinemaDAO.get("Аркадия"), cinema);
+        assertEquals(cinema, cinemaDAO.get("Аркадия"));
     }
 }

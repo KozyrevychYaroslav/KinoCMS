@@ -2,6 +2,7 @@ package com.kozyrevych.app.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -36,6 +37,7 @@ public class Cinema {
     private Set<News> news;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JoinTable(name = "FilmCinema",
             joinColumns = @JoinColumn(name = "cinema_id"),
             inverseJoinColumns = @JoinColumn(name = "film_data_id"))
@@ -72,5 +74,7 @@ public class Cinema {
         return Objects.hash(cinemaName, info, address);
     }
 
-
+    public void removeFilmData(FilmData filmData) {
+        filmsData.removeIf(o -> o.getId() == filmData.getId());
+    }
 }
