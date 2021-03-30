@@ -102,6 +102,7 @@ public class CurrentFilmDataTest {
         currentFilmData.setFilmHall(filmHallDAO.get(10));
         currentFilmDataDAO.save(currentFilmData);
 
+
         assertEquals(Set.of(currentFilmDataDAO.get(1), currentFilmData), filmDataDAO.getCurrentFilmDatas(1));
         assertEquals(Set.of(currentFilmDataDAO.get(1), currentFilmData), filmHallDAO.getCurrentFilmDatas(1));
     }

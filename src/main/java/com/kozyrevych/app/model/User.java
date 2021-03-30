@@ -22,6 +22,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotNull
+    private Gender gender = Gender.MALE;
+
     @Column(name = "phone_number")
     @Size(min = 2, max = 15, message = "Incorrect number")
     private String phoneNumber = "";
@@ -58,26 +61,31 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return phoneNumber.equals(user.phoneNumber) && email.equals(user.email) && name.equals(user.name) && password.equals(user.password) && Objects.equals(birthday, user.birthday) && registrationDate.equals(user.registrationDate);
+        return gender == user.gender && phoneNumber.equals(user.phoneNumber) && email.equals(user.email) && name.equals(user.name) && password.equals(user.password) && birthday.equals(user.birthday);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(phoneNumber, email, name, password, birthday, registrationDate);
+        return Objects.hash(gender, phoneNumber, email, name, password, birthday);
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
+                ", gender=" + gender +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 ", birthday=" + birthday +
-                ", registrationDate=" + registrationDate +
                 '}';
     }
+
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "usr_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 
     public void removeCurrentFilmData(CurrentFilmData currentFilmData) {
         currentFilmsData.removeIf(o -> o.getId() == currentFilmData.getId());

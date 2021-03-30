@@ -1,5 +1,6 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.SessionFactoryUtil;
 import com.kozyrevych.app.model.CurrentFilmData;
 import com.kozyrevych.app.model.FreePlace;
 import com.kozyrevych.app.model.User;
@@ -8,13 +9,21 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Set;
 
+@Component
 public class UserDAO {
     private SessionFactory factory;
+
+    @Autowired
+    public UserDAO(SessionFactoryUtil factory) {
+        this.factory = factory.getSessionFactory();
+    }
 
     public UserDAO(SessionFactory factory) {
         this.factory = factory;
@@ -40,11 +49,11 @@ public class UserDAO {
         }
     }
 
-    public void update(User User) {
+    public void update(User user) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
-                session.update(User);
+                session.merge(user);
             } catch (IllegalArgumentException e) {
                 System.out.println("Can't update User");
             }

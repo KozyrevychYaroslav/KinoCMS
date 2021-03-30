@@ -45,7 +45,6 @@ public class MobileAppTest {
         mobileApp.setInfo("some info 1");
         cinema.setMobileApp(mobileApp);
         cinemaDAO.save(cinema);
-
         assertEquals(mobileApp, mobileAppDAO.get(1));
     }
 
