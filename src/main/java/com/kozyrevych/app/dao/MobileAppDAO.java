@@ -4,12 +4,14 @@ import com.kozyrevych.app.model.MobileApp;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class MobileAppDAO {
     private SessionFactory factory;
 
+    @Autowired
     public MobileAppDAO(SessionFactory factory) {
         this.factory = factory;
     }

@@ -26,7 +26,7 @@ public class FilmHall {
     private String info = "";
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cinema_id", nullable = false)
+    @JoinColumn(name = "cinema_id")
     private Cinema cinema;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmHall", cascade = CascadeType.ALL, orphanRemoval = true)

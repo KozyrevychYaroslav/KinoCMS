@@ -4,12 +4,14 @@ import com.kozyrevych.app.model.Contacts;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class ContactsDAO {
     private SessionFactory factory;
 
+    @Autowired
     public ContactsDAO(SessionFactory factory) {
         this.factory = factory;
     }

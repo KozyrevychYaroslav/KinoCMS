@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.NoResultException;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 public class NewsDAO {
     private SessionFactory factory;
 
+    @Autowired
     public NewsDAO(SessionFactory factory) {
         this.factory = factory;
     }

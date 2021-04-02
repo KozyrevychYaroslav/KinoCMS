@@ -77,4 +77,14 @@ public class Cinema {
     public void removeFilmData(FilmData filmData) {
         filmsData.removeIf(o -> o.getId() == filmData.getId());
     }
+
+    @Override
+    public String toString() {
+        return "Cinema{" +
+                "id=" + id +
+                ", cinemaName='" + cinemaName + '\'' +
+                ", info='" + info + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }

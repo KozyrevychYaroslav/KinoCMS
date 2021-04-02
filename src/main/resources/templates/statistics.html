@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Dashboard</title>
+  <title th:text="${cinemas.get(0)}"></title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet"
@@ -169,9 +169,8 @@
           <span style="font-weight:bold" >Кинотеатр</span>
         </button>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
+          <a class="dropdown-item" href="statistics" th:text="${cinemas.get(0)}"></a>
+          <a class="dropdown-item" href="statistics1" th:text="${cinemas.get(1)}"></a>
         </div>
       </div>
     </section>
@@ -184,7 +183,7 @@
           <!-- BAR CHART -->
           <div class="card card-success col-md-4">
             <div class="card-header">
-              <h3 class="card-title">Популярность кинотеатров</h3>
+              <h3 class="card-title">Количество сеансов в месяц</h3>
             </div>
             <div class="card-body">
               <div class="chart">
@@ -197,7 +196,7 @@
           <!-- PIE CHART -->
           <div class="card card-danger col-md-4">
             <div class="card-header">
-              <h3 class="card-title">Популярность фильмов</h3>
+              <h3 class="card-title">Популярность фильмов (общее количество сеансов)</h3>
             </div>
             <div class="card-body">
               <canvas id="pieChart"
@@ -208,8 +207,8 @@
           <div class="col-lg-4 col-6">
             <div class="small-box bg-warning" style="height: 150px;">
               <div class="inner">
-                <h3 style="font-size: 60px">44</h3>
-                <p style="font-size: 30px">User Registrations</p>
+                <h3 style="font-size: 50px" th:text="${registeredUsers}"></h3>
+                <p style="font-size: 23px">Зарегистрированные <br>пользователи</p>
               </div>
               <div class="icon">
                 <i class="fas fa-user-plus"></i>
@@ -335,17 +334,15 @@
 <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 
-<script>
-  $(function () {
-    // //-------------
-    // //- LINE CHART -
-    // //--------------
+<script th:inline="javascript">
+
+  /*<![CDATA[*/
     var areaChartData = {
       labels: ['Январь', 'Февраль', 'Март', 'Апрель',
         'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
       datasets: [
         {
-          label: 'Digital Goods',
+          label: [[${cinemas}]][0],
           backgroundColor: 'rgba(60,141,188,0.9)',
           borderColor: 'rgba(60,141,188,0.8)',
           pointRadius: false,
@@ -353,7 +350,7 @@
           pointStrokeColor: 'rgba(60,141,188,1)',
           pointHighlightFill: '#fff',
           pointHighlightStroke: 'rgba(60,141,188,1)',
-          data: [28, 48, 40, 19, 86, 27, 90, 76, 91, 40, 32, 78]
+          data: /*[[${usersStat}]]*/ ''
         }
       ]
     }
@@ -381,23 +378,20 @@
       options: lineChartOptions
     })
 
-    // //-------------
-    // //- DONUT CHART -
-    // //-------------
-    // // Get context with jQuery - using jQuery's .get() method.
+
     var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
     var arr = [];
-    while(arr.length < 2){
-      arr.push('#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6))
+    while (arr.length < 2) {
+      arr.push('#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6))
     }
     var donutData = {
       labels: [
-        'Женский пол',
-        'Мужской пол'
+        'Мужской пол',
+        'Женский пол'
       ],
       datasets: [
         {
-          data: [700, 5000],
+          data: /*[[${genders}]]*/ '',
           backgroundColor: arr,
         }
       ]
@@ -413,24 +407,17 @@
       options: donutOptions
     })
 
+  var arr = [];
+  while (arr.length < [[${films}]].length) {
+    arr.push('#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6))
+  }
 
-    // //-------------
-    // //- PIE CHART -
-    // //-------------
-    // // Get context with jQuery - using jQuery's .get() method.
     var pieData = {
-      labels: [
-        'Chrome',
-        'IE',
-        'FireFox',
-        'Safari',
-        'Opera',
-        'Navigator',
-      ],
+      labels: /*[[${films}]]*/ '',
       datasets: [
         {
-          data: [700, 500, 400, 600, 300, 100],
-          backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+          data: /*[[${filmsCount}]]*/ '',
+          backgroundColor: arr,
         }
       ]
     }
@@ -440,23 +427,20 @@
       maintainAspectRatio: false,
       responsive: true,
     }
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
+
     new Chart(pieChartCanvas, {
       type: 'pie',
       data: pieData,
       options: pieOptions
     })
 
-    //-------------
-    //- BAR CHART -
-    //-------------
+
     var areaChartData1 = {
       labels: ['Январь', 'Февраль', 'Март', 'Апрель',
         'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
       datasets: [
         {
-          label: 'Кинотеатр #2',
+          label: [[${cinemas}]][0],
           backgroundColor: 'rgba(60,141,188,0.9)',
           borderColor: 'rgba(60,141,188,0.8)',
           pointRadius: false,
@@ -464,11 +448,10 @@
           pointStrokeColor: 'rgba(60,141,188,1)',
           pointHighlightFill: '#fff',
           pointHighlightStroke: 'rgba(60,141,188,1)',
-          data: [28, 48, 40, 19, 86, 27, 90, 50, 82, 100, 13, 12],
-
+          data: [[${cinemasPopularity}]][0],
         },
         {
-          label: 'Кинотеатр #1',
+          label: [[${cinemas}]][1] ,
           backgroundColor: 'rgba(210, 214, 222, 1)',
           borderColor: 'rgba(210, 214, 222, 1)',
           pointRadius: false,
@@ -476,7 +459,7 @@
           pointStrokeColor: '#c1c7d1',
           pointHighlightFill: '#fff',
           pointHighlightStroke: 'rgba(220,220,220,1)',
-          data: [65, 59, 80, 81, 56, 55, 40, 70, 65, 42, 65, 50]
+          data: [[${cinemasPopularity}]][1],
         },
       ]
     }
@@ -514,13 +497,13 @@
         labels: ['Январь', 'Февраль', 'Март', 'Апрель',
           'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         datasets: [{
-          data: [86,114,106,106,107,111,133,221,783,2478, 121,1242],
-          label: "Africa",
+          data: /*[[${profit}]]*/ '',
+          label: [[${cinemas}]][0],
           borderColor: "#3e95cd",
           fill: false
         }, {
-          data: [282,350,411,502,635,809,947,1402,3700,5267,154,1234],
-          label: "Asia",
+          data: /*[[${profit1}]]*/ '',
+          label: [[${cinemas}]][1],
           borderColor: "#8e5ea2",
           fill: false
         },
@@ -534,15 +517,15 @@
         labels: ['Январь', 'Февраль', 'Март', 'Апрель',
           'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         datasets: [{
-          data: [86,114,106,106,107,111,133,221,783,2478, 121,1242],
-          label: "Africa",
+          data: /*[[${profit}]]*/ '',
+          label: [[${cinemas}]][0],
           borderColor: "#3e95cd",
           fill: false
         }
         ]
       }
     });
-  })
+  /*]]>*/
 </script>
 </body>
 </html>

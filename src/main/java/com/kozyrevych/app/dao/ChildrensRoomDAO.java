@@ -4,12 +4,14 @@ import com.kozyrevych.app.model.ChildrensRoom;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class ChildrensRoomDAO {
     private SessionFactory factory;
 
+    @Autowired
     public ChildrensRoomDAO(SessionFactory factory) {
         this.factory = factory;
     }

@@ -4,12 +4,14 @@ import com.kozyrevych.app.model.Advertising;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class AdvertisingDAO {
     private SessionFactory factory;
 
+    @Autowired
     public AdvertisingDAO(SessionFactory factory) {
         this.factory = factory;
     }

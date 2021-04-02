@@ -35,11 +35,11 @@ public class CurrentFilmData {
     private double price;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "film_hall_id", nullable = false)
+    @JoinColumn(name = "film_hall_id")
     private FilmHall filmHall;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "film_data_id", nullable = false)
+    @JoinColumn(name = "film_data_id")
     private FilmData filmData;
 
     @ManyToMany(mappedBy = "currentFilmsData", fetch = FetchType.LAZY)

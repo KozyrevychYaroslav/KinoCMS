@@ -4,12 +4,14 @@ import com.kozyrevych.app.model.FreePlace;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class FreePlaceDAO {
     private SessionFactory factory;
 
+    @Autowired
     public FreePlaceDAO(SessionFactory factory) {
         this.factory = factory;
     }

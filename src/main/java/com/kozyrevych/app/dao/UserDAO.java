@@ -1,36 +1,37 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.SessionFactoryUtil;
 import com.kozyrevych.app.model.CurrentFilmData;
 import com.kozyrevych.app.model.FreePlace;
+import com.kozyrevych.app.model.Gender;
 import com.kozyrevych.app.model.User;
+import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.NoResultException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Component
 public class UserDAO {
-    private SessionFactory factory;
+    private SessionFactory sessionFactory;
 
     @Autowired
-    public UserDAO(SessionFactoryUtil factory) {
-        this.factory = factory.getSessionFactory();
-    }
-
-    public UserDAO(SessionFactory factory) {
-        this.factory = factory;
+    public UserDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     public void save(User User) {
-        try (final Session session = factory.openSession()) {
+        try (final Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.save(User);
             transaction.commit();
@@ -38,7 +39,7 @@ public class UserDAO {
     }
 
     public User get(String phoneNumber) {
-        try (final Session session = factory.openSession()) {
+        try (final Session session = sessionFactory.openSession()) {
             Query query = session.createQuery("from User c where phoneNumber =: phoneNumber");
             query.setParameter("phoneNumber", phoneNumber);
             try {
@@ -50,7 +51,7 @@ public class UserDAO {
     }
 
     public void update(User user) {
-        try (final Session session = factory.openSession()) {
+        try (final Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
                 session.merge(user);
@@ -62,7 +63,7 @@ public class UserDAO {
     }
 
     public void delete(String phoneNumber) {
-        try (final Session session = factory.openSession()) {
+        try (final Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             User c = get(phoneNumber);
             try {
@@ -75,13 +76,13 @@ public class UserDAO {
     }
 
     public List<User> getAll() {
-        try (final Session session = factory.openSession()) {
+        try (final Session session = sessionFactory.openSession()) {
             return session.createQuery("from User", User.class).getResultList();
         }
     }
 
     public Set<CurrentFilmData> getCurrentFilmDatas(String phoneNumber) {
-        try (final Session session = factory.openSession()) {
+        try (final Session session = sessionFactory.openSession()) {
             User c = get(phoneNumber);
             c = session.get(User.class, c.getId());
             Hibernate.initialize(c.getCurrentFilmsData());
@@ -93,7 +94,7 @@ public class UserDAO {
     }
 
     public Set<FreePlace> getFreePlaces(String phoneNumber) {
-        try (final Session session = factory.openSession()) {
+        try (final Session session = sessionFactory.openSession()) {
             User c = get(phoneNumber);
             c = session.get(User.class, c.getId());
             Hibernate.initialize(c.getFreePlaces());
@@ -101,6 +102,16 @@ public class UserDAO {
         } catch (NullPointerException e) {
             System.out.println("No phoneNumber: " + phoneNumber);
             return null;
+        }
+    }
+
+    public Map<Gender, Long> getNumberOfGenders() {
+        try (final Session session = sessionFactory.openSession()) {
+            List<User> users = getAll();
+            Map<Gender, Long> genders = new LinkedHashMap<>();
+            genders.put(Gender.FEMALE, users.stream().filter(i -> i.getGender() == Gender.FEMALE).count());
+            genders.put(Gender.MALE, users.stream().filter(i -> i.getGender() == Gender.MALE).count());
+            return genders;
         }
     }
 

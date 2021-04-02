@@ -6,13 +6,17 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
 
+@Component
 public class CurrentFilmDataDAO {
     private SessionFactory factory;
 
+    @Autowired
     public CurrentFilmDataDAO(SessionFactory factory) {
         this.factory = factory;
     }
@@ -79,5 +83,7 @@ public class CurrentFilmDataDAO {
             return null;
         }
     }
+
+
 
 }

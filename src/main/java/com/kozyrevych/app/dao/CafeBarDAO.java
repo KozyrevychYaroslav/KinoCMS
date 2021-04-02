@@ -4,12 +4,14 @@ import com.kozyrevych.app.model.CafeBar;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class CafeBarDAO {
     private SessionFactory factory;
 
+    @Autowired
     public CafeBarDAO(SessionFactory factory) {
         this.factory = factory;
     }

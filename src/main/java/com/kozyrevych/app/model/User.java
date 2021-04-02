@@ -23,6 +23,7 @@ public class User {
     private long id;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Gender gender = Gender.MALE;
 
     @Column(name = "phone_number")
@@ -73,7 +74,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", gender=" + gender +
+                ", gender=" + gender.name() +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
