@@ -1,4 +1,4 @@
-package com.kozyrevych.app;
+package com.kozyrevych.app.controllers;
 
 
 import com.kozyrevych.app.dao.*;

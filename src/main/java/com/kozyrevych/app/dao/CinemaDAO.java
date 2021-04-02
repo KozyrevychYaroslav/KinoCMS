@@ -1,28 +1,27 @@
 package com.kozyrevych.app.dao;
 
 import com.kozyrevych.app.model.*;
-import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import org.hibernate.service.NullServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.NoResultException;
-import javax.xml.crypto.Data;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 public class CinemaDAO {
     private SessionFactory factory;
-    CurrentFilmDataDAO currentFilmDataDAO;
+    private CurrentFilmDataDAO currentFilmDataDAO;
 
     @Autowired
     public CinemaDAO(SessionFactory factory, CurrentFilmDataDAO currentFilmDataDAO) {
@@ -249,7 +248,10 @@ public class CinemaDAO {
                     "where c.cinemaName =: name " +
                     "group by fd.id");
             query.setParameter("name", name);
-            return (List<String>) query.getResultList().stream().map(o -> ((FilmData) o).getFilmTitle()).collect(Collectors.toList());
+            return (List<String>) query.getResultList().stream().
+                    map(o -> ((FilmData) o).
+                            getFilmTitle()).
+                    collect(Collectors.toList());
         } catch (NullPointerException | NoResultException e) {
             System.out.println("no cinema: " + name);
             return null;
@@ -310,10 +312,10 @@ public class CinemaDAO {
                     if (localDateTime.getMonthValue() == i) numbers[i - 1] +=
                             currentFilmDataDAO.getUsers(currentFilmData1.getId()).stream().
                                     map(o -> currentFilmData1.getPrice()).
-                                    reduce(0.0, (x, y) -> x + y);
+                                    reduce(0.0, Double::sum);
                 }
-                if(i == 12) continue;
-                numbers[i] = numbers[i-1];
+                if (i == 12) continue;
+                numbers[i] = numbers[i - 1];
             }
             return numbers;
         } catch (IllegalArgumentException | NoResultException e) {

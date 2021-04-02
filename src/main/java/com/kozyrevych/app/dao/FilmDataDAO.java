@@ -69,7 +69,7 @@ public class FilmDataDAO {
             c.removeFilmDataFromCinemas();
             try {
                 session.delete(c);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("No FilmData with title: " + title + " in database ");
                 transaction.rollback();
             }
