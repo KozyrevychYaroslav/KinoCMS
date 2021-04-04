@@ -4,6 +4,8 @@ import com.kozyrevych.app.dao.*;
 import com.kozyrevych.app.model.*;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,31 +14,18 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class UserTest {
-    private static SessionFactory sessionFactory = null;
-    private static UserDAO userDAO = null;
-    private static CurrentFilmDataDAO currentFilmDataDAO = null;
-    private static FilmHallDAO filmHallDAO = null;
-    private static CinemaDAO cinemaDAO = null;
-    private static FilmDataDAO filmDataDAO = null;
-
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        userDAO = new UserDAO(sessionFactory);
-        currentFilmDataDAO = new CurrentFilmDataDAO(sessionFactory);
-        filmHallDAO = new FilmHallDAO(sessionFactory);
-        cinemaDAO = new CinemaDAO(sessionFactory);
-        currentFilmDataDAO = new CurrentFilmDataDAO(sessionFactory);
-        filmDataDAO = new FilmDataDAO(sessionFactory);
-    }
-
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
+    @Autowired
+    private UserDAO userDAO = null;
+    @Autowired
+    private CurrentFilmDataDAO currentFilmDataDAO = null;
+    @Autowired
+    private FilmHallDAO filmHallDAO = null;
+    @Autowired
+    private  CinemaDAO cinemaDAO = null;
+    @Autowired
+    private  FilmDataDAO filmDataDAO = null;
 
     @Test
     @DisplayName("Adding data to user table")
@@ -210,18 +199,18 @@ public class UserTest {
         assertEquals(Set.of(user1, user2), currentFilmDataDAO.getUsers(1));
 
         //у user с телефоном +380677157636 всего один currentfilmdata
-        assertEquals("[" + currentFilmDataDAO.get(1) + "]", userDAO.getCurrentFilmDatas("+380677157636").toString());
+        assertEquals("[" + currentFilmDataDAO.get(1L) + "]", userDAO.getCurrentFilmDatas("+380677157636").toString());
 
         //у user с телефоном +380677157655 всего один currentfilmdata равный первому user
-        assertEquals("[" + currentFilmDataDAO.get(1)  + "]", userDAO.getCurrentFilmDatas("+380677157655").toString());
+        assertEquals("[" + currentFilmDataDAO.get(1L)  + "]", userDAO.getCurrentFilmDatas("+380677157655").toString());
 
         // user теперь имеет несколько currentFilmData
-        user1.setCurrentFilmsData(new HashSet<>(Arrays.asList(currentFilmDataDAO.get(1), currentFilmDataDAO.get(2))));
+        user1.setCurrentFilmsData(new HashSet<>(Arrays.asList(currentFilmDataDAO.get(1L), currentFilmDataDAO.get(2L))));
         userDAO.update(user1);
 
         assertEquals(userDAO.getCurrentFilmDatas("+380677157636"), Set.of(currentFilmData,currentFilmData1));
 
-        assertEquals("[" + currentFilmDataDAO.get(1) + "]", userDAO.getCurrentFilmDatas("+380677157655").toString());
+        assertEquals("[" + currentFilmDataDAO.get(1L) + "]", userDAO.getCurrentFilmDatas("+380677157655").toString());
     }
 
     @Test
@@ -230,23 +219,23 @@ public class UserTest {
     public void m7() {
         assertEquals(1, userDAO.getCurrentFilmDatas("+380677157655").size());
 
-        assertEquals(userDAO.getCurrentFilmDatas("+380677157636"), Set.of(currentFilmDataDAO.get(1), currentFilmDataDAO.get(2)));
+        assertEquals(userDAO.getCurrentFilmDatas("+380677157636"), Set.of(currentFilmDataDAO.get(1L), currentFilmDataDAO.get(2L)));
 
-        currentFilmDataDAO.delete(2);
+        currentFilmDataDAO.delete(2L);
 
         // после удаления currentFilmData связи из внешней таблицы связи пропадут
-        assertEquals(userDAO.getCurrentFilmDatas("+380677157636"), Set.of(currentFilmDataDAO.get(1)));
+        assertEquals(userDAO.getCurrentFilmDatas("+380677157636"), Set.of(currentFilmDataDAO.get(1L)));
 
         //после удаления CurrentFilmData аккаунты user не должны удаляться
-        assertEquals(userDAO.getAll().size(), 2);
+        assertEquals(userDAO.getAll().size(), 2L);
 
-        assertEquals(currentFilmDataDAO.getAll().size(), 1);
+        assertEquals(currentFilmDataDAO.getAll().size(), 1L);
 
         userDAO.delete("+380677157655");
 
-        assertEquals(userDAO.getAll().size(), 1);
+        assertEquals(userDAO.getAll().size(), 1L);
 
-        assertEquals(currentFilmDataDAO.getAll().size(), 1);
+        assertEquals(currentFilmDataDAO.getAll().size(), 1L);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
+import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.News;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,7 +14,7 @@ import javax.persistence.NoResultException;
 import java.util.List;
 
 @Component
-public class NewsDAO {
+public class NewsDAO implements DAO<News, String>{
     private SessionFactory factory;
 
     @Autowired
@@ -20,6 +22,7 @@ public class NewsDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(News news) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -28,10 +31,12 @@ public class NewsDAO {
         }
     }
 
+    @Override
     public void delete(String name) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             News c = get(name);
+            c = (News) session.merge(c);
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -41,6 +46,7 @@ public class NewsDAO {
         }
     }
 
+    @Override
     public void update(News news) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -53,6 +59,7 @@ public class NewsDAO {
         }
     }
 
+    @Override
     public News get(String name) {
         try (final Session session = factory.openSession()) {
             Query query = session.createQuery("select c from News c where newsTitle =: name");
@@ -65,6 +72,7 @@ public class NewsDAO {
         }
     }
 
+    @Override
     public List<News> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from News", News.class).getResultList();

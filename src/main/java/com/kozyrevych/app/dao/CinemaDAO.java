@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class CinemaDAO {
+public class CinemaDAO implements DAO<Cinema, String> {
     private SessionFactory factory;
     private CurrentFilmDataDAO currentFilmDataDAO;
 
@@ -29,6 +29,7 @@ public class CinemaDAO {
         this.currentFilmDataDAO = currentFilmDataDAO;
     }
 
+    @Override
     public void save(Cinema cinema) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -37,6 +38,7 @@ public class CinemaDAO {
         }
     }
 
+    @Override
     public Cinema get(String title) {
         try (final Session session = factory.openSession()) {
             Query query = session.createQuery("select c from Cinema c where cinemaName =: title");
@@ -158,6 +160,7 @@ public class CinemaDAO {
         }
     }
 
+    @Override
     public void update(Cinema cinema) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -170,10 +173,12 @@ public class CinemaDAO {
         }
     }
 
+    @Override
     public void delete(String name) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Cinema c = get(name);
+            c = session.get(Cinema.class, c.getId());
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -183,6 +188,7 @@ public class CinemaDAO {
         }
     }
 
+    @Override
     public List<Cinema> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from Cinema", Cinema.class).getResultList();

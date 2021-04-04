@@ -1,5 +1,7 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
+import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.Stock;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,7 +14,7 @@ import javax.persistence.NoResultException;
 import java.util.List;
 
 @Component
-public class StockDAO {
+public class StockDAO implements DAO<Stock, String> {
     private SessionFactory factory;
 
     @Autowired
@@ -20,6 +22,7 @@ public class StockDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(Stock stock) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -28,10 +31,12 @@ public class StockDAO {
         }
     }
 
+    @Override
     public void delete(String name) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Stock c = get(name);
+            c = (Stock) session.merge(c);
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -41,6 +46,7 @@ public class StockDAO {
         }
     }
 
+    @Override
     public void update(Stock stock) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -53,6 +59,7 @@ public class StockDAO {
         }
     }
 
+    @Override
     public Stock get(String name) {
         try (final Session session = factory.openSession()) {
             Query query = session.createQuery("select c from Stock c where title =: name");
@@ -65,6 +72,7 @@ public class StockDAO {
         }
     }
 
+    @Override
     public List<Stock> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from Stock", Stock.class).getResultList();

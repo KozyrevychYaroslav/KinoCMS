@@ -4,25 +4,15 @@ import com.kozyrevych.app.dao.CinemaDAO;
 import com.kozyrevych.app.model.Cinema;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class CinemaTest {
-    private static SessionFactory sessionFactory = null;
-    private static CinemaDAO cinemaDAO = null;
-
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        cinemaDAO = new CinemaDAO(sessionFactory);
-    }
-
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
+    @Autowired
+    private CinemaDAO cinemaDAO = null;
 
     @Test
     @DisplayName("Adding data to cinema table")

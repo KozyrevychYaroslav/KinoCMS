@@ -4,6 +4,8 @@ import com.kozyrevych.app.dao.*;
 import com.kozyrevych.app.model.*;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,28 +15,16 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class CurrentFilmDataTest {
-    private static SessionFactory sessionFactory = null;
-    private static CurrentFilmDataDAO currentFilmDataDAO = null;
-    private static FilmDataDAO filmDataDAO = null;
-    private static FilmHallDAO filmHallDAO = null;
-    private static CinemaDAO cinemaDAO = null;
-
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        filmDataDAO = new FilmDataDAO(sessionFactory);
-        currentFilmDataDAO = new CurrentFilmDataDAO(sessionFactory);
-        filmHallDAO = new FilmHallDAO(sessionFactory);
-        cinemaDAO = new CinemaDAO(sessionFactory);
-    }
-
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
+    @Autowired
+    private CurrentFilmDataDAO currentFilmDataDAO = null;
+    @Autowired
+    private FilmDataDAO filmDataDAO = null;
+    @Autowired
+    private FilmHallDAO filmHallDAO = null;
+    @Autowired
+    private  CinemaDAO cinemaDAO = null;
 
     @Test
     @DisplayName("Add and get data to currentFilmData table")
@@ -81,7 +71,7 @@ public class CurrentFilmDataTest {
 
         cinemaDAO.save(cinema);
 
-        assertEquals(currentFilmData, currentFilmDataDAO.get(1));
+        assertEquals(currentFilmData, currentFilmDataDAO.get(1L));
     }
 
     @Test
@@ -103,8 +93,8 @@ public class CurrentFilmDataTest {
         currentFilmDataDAO.save(currentFilmData);
 
 
-        assertEquals(Set.of(currentFilmDataDAO.get(1), currentFilmData), filmDataDAO.getCurrentFilmDatas(1));
-        assertEquals(Set.of(currentFilmDataDAO.get(1), currentFilmData), filmHallDAO.getCurrentFilmDatas(1));
+        assertEquals(Set.of(currentFilmDataDAO.get(1L), currentFilmData), filmDataDAO.getCurrentFilmDatas(1));
+        assertEquals(Set.of(currentFilmDataDAO.get(1L), currentFilmData), filmHallDAO.getCurrentFilmDatas(1));
     }
 
 
@@ -180,11 +170,11 @@ public class CurrentFilmDataTest {
         currentFilmData.setPrice(123);
         currentFilmDataDAO.update(currentFilmData);
 
-        assertEquals(currentFilmData, currentFilmDataDAO.get(4));
+        assertEquals(currentFilmData, currentFilmDataDAO.get(4L));
 
-        currentFilmDataDAO.delete(4);
+        currentFilmDataDAO.delete(4L);
 
-        assertNull(currentFilmDataDAO.get(4));
+        assertNull(currentFilmDataDAO.get(4L));
 
         assertNotNull(filmDataDAO.get("Film title #1"));
         assertNotNull(filmHallDAO.get(10));

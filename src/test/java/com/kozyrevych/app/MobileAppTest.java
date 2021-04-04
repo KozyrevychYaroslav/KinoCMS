@@ -6,29 +6,19 @@ import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.MobileApp;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class MobileAppTest {
-    private static SessionFactory sessionFactory = null;
-    private static MobileAppDAO mobileAppDAO = null;
-    private static CinemaDAO cinemaDAO = null;
-
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        cinemaDAO = new CinemaDAO(sessionFactory);
-        mobileAppDAO = new MobileAppDAO(sessionFactory);
-    }
-
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
+    @Autowired
+    private MobileAppDAO mobileAppDAO = null;
+    @Autowired
+    private CinemaDAO cinemaDAO = null;
 
     @Test
     @DisplayName("Add and get data to mobileApp table")
@@ -45,14 +35,14 @@ public class MobileAppTest {
         mobileApp.setInfo("some info 1");
         cinema.setMobileApp(mobileApp);
         cinemaDAO.save(cinema);
-        assertEquals(mobileApp, mobileAppDAO.get(1));
+        assertEquals(mobileApp, mobileAppDAO.get(1L));
     }
 
     @Test
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(mobileAppDAO.get(1), cinemaDAO.getMobileApp("Высоцкого"));
+        assertEquals(mobileAppDAO.get(1L), cinemaDAO.getMobileApp("Высоцкого"));
     }
 
     @Test
@@ -94,18 +84,18 @@ public class MobileAppTest {
     @DisplayName("update data in mobileApp table")
     @Order(6)
     public void m6() {
-        MobileApp mobileApp = mobileAppDAO.get(2);
+        MobileApp mobileApp = mobileAppDAO.get(2L);
 
         mobileApp.setInfo("UPDATED info");
         mobileAppDAO.update(mobileApp);
 
-        assertEquals(mobileApp, mobileAppDAO.get(2));
+        assertEquals(mobileApp, mobileAppDAO.get(2L));
 
-        mobileAppDAO.delete(2);
+        mobileAppDAO.delete(2L);
 
-        assertNull(mobileAppDAO.get(1));
+        assertNull(mobileAppDAO.get(1L));
 
-        assertNull(mobileAppDAO.get(3));
+        assertNull(mobileAppDAO.get(3L));
 
         assertNotNull(cinemaDAO.get("Бочарова"));
     }

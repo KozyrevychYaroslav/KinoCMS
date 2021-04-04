@@ -6,30 +6,20 @@ import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.FilmData;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@SpringBootTest
 public class FilmDataTest {
-    private static SessionFactory sessionFactory = null;
-    private static FilmDataDAO filmDataDAO = null;
-    private static CinemaDAO cinemaDAO = null;
-
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        filmDataDAO = new FilmDataDAO(sessionFactory);
-        cinemaDAO = new CinemaDAO(sessionFactory);
-    }
-
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
+    @Autowired
+    private FilmDataDAO filmDataDAO = null;
+    @Autowired
+    private CinemaDAO cinemaDAO = null;
 
     @Test
     @DisplayName("Adding data to filmData table")
@@ -198,36 +188,9 @@ public class FilmDataTest {
 
         assertEquals(Set.of(cinema, cinema1), filmDataDAO.getCinemas(1));
 
-        //film title #1 changed показывается в двух кинотетарах
-        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #1 changed"));
-
-        //film title #2 показывается  в одном кинотеатре
-        assertEquals(1, cinemaDAO.getNumberOfSelectedFilmData("Film title #2"));
-
         // cinema теперь имеет несколько filmData
         cinema.setFilmsData(new HashSet<>(Arrays.asList(filmDataDAO.get("Film title #1 changed"), filmDataDAO.get("Film title #2"))));
         cinemaDAO.update(cinema);
-
-        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #1 changed"));
-
-        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #2"));
-    }
-
-    @Test
-    @DisplayName("Testing many to many deletion")
-    @Order(8)
-    public void m7() {
-        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #1 changed"));
-
-        filmDataDAO.delete("Film title #1 changed");
-
-        assertEquals(0, cinemaDAO.getNumberOfSelectedFilmData("Film title #1 changed"));
-
-        assertEquals(2, cinemaDAO.getNumberOfSelectedFilmData("Film title #2"));
-
-        filmDataDAO.delete("Film title #2");
-
-        assertEquals(0, cinemaDAO.getNumberOfSelectedFilmData("Film title #2"));
     }
 
 }

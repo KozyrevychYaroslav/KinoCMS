@@ -10,6 +10,8 @@ import com.kozyrevych.app.model.FreePlace;
 import com.kozyrevych.app.model.User;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -17,28 +19,16 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class FreePlaceTest {
-    private static SessionFactory sessionFactory = null;
-    private static FreePlaceDAO freePlaceDAO = null;
-    private static UserDAO userDAO = null;
-    private static FilmHallDAO filmHallDAO = null;
-    private static CinemaDAO cinemaDAO = null;
-
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        userDAO = new UserDAO(sessionFactory);
-        freePlaceDAO = new FreePlaceDAO(sessionFactory);
-        filmHallDAO = new FilmHallDAO(sessionFactory);
-        cinemaDAO = new CinemaDAO(sessionFactory);
-    }
-
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
+    @Autowired
+    private  FreePlaceDAO freePlaceDAO = null;
+    @Autowired
+    private  UserDAO userDAO = null;
+    @Autowired
+    private FilmHallDAO filmHallDAO = null;
+    @Autowired
+    private CinemaDAO cinemaDAO = null;
 
     @Test
     @DisplayName("Add and get data to freePlace table")
@@ -74,7 +64,7 @@ public class FreePlaceTest {
         user.setFreePlaces(Collections.singleton(freePlace));
         userDAO.save(user);
 
-        assertEquals(freePlace, freePlaceDAO.get(1));
+        assertEquals(freePlace, freePlaceDAO.get(1L));
     }
 
     @Test
@@ -92,8 +82,8 @@ public class FreePlaceTest {
         freePlace.setUser(userDAO.get("+380677157636"));
         freePlaceDAO.save(freePlace);
 
-        assertEquals(Set.of(freePlaceDAO.get(1), freePlace), userDAO.getFreePlaces("+380677157636"));
-        assertEquals(Set.of(freePlaceDAO.get(1), freePlace), filmHallDAO.getFreePlaces(1));
+        assertEquals(Set.of(freePlaceDAO.get(1L), freePlace), userDAO.getFreePlaces("+380677157636"));
+        assertEquals(Set.of(freePlaceDAO.get(1L), freePlace), filmHallDAO.getFreePlaces(1));
     }
 
 
@@ -157,11 +147,11 @@ public class FreePlaceTest {
         freePlace.setPlaceNumber(20);
         freePlaceDAO.update(freePlace);
 
-        assertEquals(freePlace, freePlaceDAO.get(4));
+        assertEquals(freePlace, freePlaceDAO.get(4L));
 
-        freePlaceDAO.delete(4);
+        freePlaceDAO.delete(4L);
 
-        assertNull(freePlaceDAO.get(4));
+        assertNull(freePlaceDAO.get(4L));
 
         assertNotNull(userDAO.get("+380677157655"));
         assertNotNull(filmHallDAO.get(10));

@@ -1,5 +1,6 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
 import com.kozyrevych.app.model.CurrentFilmData;
 import com.kozyrevych.app.model.FilmHall;
 import com.kozyrevych.app.model.FreePlace;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-public class FilmHallDAO {
+public class FilmHallDAO implements DAO<FilmHall, Integer>{
     private SessionFactory factory;
 
     @Autowired
@@ -24,6 +25,7 @@ public class FilmHallDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(FilmHall filmHall) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -32,10 +34,12 @@ public class FilmHallDAO {
         }
     }
 
-    public void delete(int filmHallNumber) {
+    @Override
+    public void delete(Integer filmHallNumber) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             FilmHall c = get(filmHallNumber);
+            c = session.get(FilmHall.class, c.getId());
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -45,6 +49,7 @@ public class FilmHallDAO {
         }
     }
 
+    @Override
     public void update(FilmHall filmHall) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -57,7 +62,8 @@ public class FilmHallDAO {
         }
     }
 
-    public FilmHall get(int filmHallNumber) {
+    @Override
+    public FilmHall get(Integer filmHallNumber) {
         try (final Session session = factory.openSession()) {
             Query query = session.createQuery("select c from FilmHall c where filmHallNumber =: filmHallNumber");
             query.setParameter("filmHallNumber", filmHallNumber);
@@ -69,6 +75,7 @@ public class FilmHallDAO {
         }
     }
 
+    @Override
     public List<FilmHall> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from FilmHall", FilmHall.class).getResultList();

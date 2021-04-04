@@ -6,27 +6,17 @@ import com.kozyrevych.app.model.ChildrensRoom;
 import com.kozyrevych.app.model.Cinema;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class ChildrensRoomTest {
-    private static SessionFactory sessionFactory = null;
-    private static ChildrensRoomDAO childrensRoomDAO = null;
-    private static CinemaDAO cinemaDAO = null;
-
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        cinemaDAO = new CinemaDAO(sessionFactory);
-        childrensRoomDAO = new ChildrensRoomDAO(sessionFactory);
-    }
-
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
+    @Autowired
+    private ChildrensRoomDAO childrensRoomDAO = null;
+    @Autowired
+    private CinemaDAO cinemaDAO = null;
 
     @Test
     @DisplayName("Add and get data to childrensRoom table")
@@ -44,14 +34,14 @@ public class ChildrensRoomTest {
         cinema.setChildrensRoom(childrensRoom);
         cinemaDAO.save(cinema);
 
-        assertEquals(childrensRoom, childrensRoomDAO.get(1));
+        assertEquals(childrensRoom, childrensRoomDAO.get(1L));
     }
 
     @Test
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(childrensRoomDAO.get(1), cinemaDAO.getChildrensRoom("Высоцкого"));
+        assertEquals(childrensRoomDAO.get(1L), cinemaDAO.getChildrensRoom("Высоцкого"));
     }
 
     @Test
@@ -93,18 +83,18 @@ public class ChildrensRoomTest {
     @DisplayName("update data in childrensRoom table")
     @Order(6)
     public void m6() {
-        ChildrensRoom childrensRoom = childrensRoomDAO.get(2);
+        ChildrensRoom childrensRoom = childrensRoomDAO.get(2L);
 
         childrensRoom.setInfo("UPDATED info");
         childrensRoomDAO.update(childrensRoom);
 
-        assertEquals(childrensRoom, childrensRoomDAO.get(2));
+        assertEquals(childrensRoom, childrensRoomDAO.get(2L));
 
-        childrensRoomDAO.delete(2);
+        childrensRoomDAO.delete(2L);
 
-        assertNull(childrensRoomDAO.get(1));
+        assertNull(childrensRoomDAO.get(1L));
 
-        assertNull(childrensRoomDAO.get(3));
+        assertNull(childrensRoomDAO.get(3L));
 
         assertNotNull(cinemaDAO.get("Бочарова"));
     }

@@ -55,6 +55,6 @@ public class FilmHall {
                 ", filmHallNumber=" + filmHallNumber +
                 ", info='" + info + '\'' +
                 ", cinema name ='" + cinema.getCinemaName() +
-                "\'}";
+                "'}";
     }
 }

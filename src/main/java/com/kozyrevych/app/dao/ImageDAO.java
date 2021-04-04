@@ -1,5 +1,7 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
+import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.Image;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,7 +14,7 @@ import javax.persistence.NoResultException;
 import java.util.List;
 
 @Component
-public class ImageDAO {
+public class ImageDAO implements DAO<Image, String>{
     private SessionFactory factory;
 
     @Autowired
@@ -20,6 +22,7 @@ public class ImageDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(Image image) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -28,10 +31,12 @@ public class ImageDAO {
         }
     }
 
+    @Override
     public void delete(String name) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Image c = get(name);
+            c = (Image) session.merge(c);
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -41,6 +46,7 @@ public class ImageDAO {
         }
     }
 
+    @Override
     public void update(Image image) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -53,6 +59,7 @@ public class ImageDAO {
         }
     }
 
+    @Override
     public Image get(String name) {
         try (final Session session = factory.openSession()) {
             Query query = session.createQuery("from Image c where imageName =: name");
@@ -65,6 +72,7 @@ public class ImageDAO {
         }
     }
 
+    @Override
     public List<Image> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from Image", Image.class).getResultList();

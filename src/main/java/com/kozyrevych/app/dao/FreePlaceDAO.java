@@ -1,5 +1,7 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
+import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.FreePlace;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class FreePlaceDAO {
+public class FreePlaceDAO implements DAO<FreePlace, Long>{
     private SessionFactory factory;
 
     @Autowired
@@ -18,6 +20,7 @@ public class FreePlaceDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(FreePlace FreePlace) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -26,12 +29,14 @@ public class FreePlaceDAO {
         }
     }
 
-    public FreePlace get(long id) {
+    @Override
+    public FreePlace get(Long id) {
         try (final Session session = factory.openSession()) {
             return session.get(FreePlace.class, id);
         }
     }
 
+    @Override
     public void update(FreePlace FreePlace) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -44,10 +49,12 @@ public class FreePlaceDAO {
         }
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Long id) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             FreePlace c = get(id);
+            c = (FreePlace) session.merge(c);
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -57,6 +64,7 @@ public class FreePlaceDAO {
         }
     }
 
+    @Override
     public List<FreePlace> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from FreePlace", FreePlace.class).getResultList();

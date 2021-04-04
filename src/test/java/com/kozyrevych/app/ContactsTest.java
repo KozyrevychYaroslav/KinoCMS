@@ -6,27 +6,19 @@ import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.Contacts;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class ContactsTest {
-    private static SessionFactory sessionFactory = null;
-    private static ContactsDAO contactsDAO = null;
-    private static CinemaDAO cinemaDAO = null;
+    @Autowired
+    private  ContactsDAO contactsDAO = null;
+    @Autowired
+    private CinemaDAO cinemaDAO = null;
 
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        cinemaDAO = new CinemaDAO(sessionFactory);
-        contactsDAO = new ContactsDAO(sessionFactory);
-    }
 
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
 
     @Test
     @DisplayName("Add and get data to Contacts table")
@@ -44,14 +36,14 @@ public class ContactsTest {
         cinema.setContacts(contacts);
         cinemaDAO.save(cinema);
 
-        assertEquals(contacts, contactsDAO.get(1));
+        assertEquals(contacts, contactsDAO.get(1L));
     }
 
     @Test
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(contactsDAO.get(1), cinemaDAO.getContacts("Высоцкого"));
+        assertEquals(contactsDAO.get(1L), cinemaDAO.getContacts("Высоцкого"));
     }
 
     @Test
@@ -92,18 +84,18 @@ public class ContactsTest {
     @DisplayName("update data in contacts table")
     @Order(6)
     public void m6() {
-        Contacts contacts = contactsDAO.get(2);
+        Contacts contacts = contactsDAO.get(2L);
 
         contacts.setInfo("UPDATED info");
         contactsDAO.update(contacts);
 
-        assertEquals(contacts, contactsDAO.get(2));
+        assertEquals(contacts, contactsDAO.get(2L));
 
-        contactsDAO.delete(2);
+        contactsDAO.delete(2L);
 
-        assertNull(contactsDAO.get(1));
+        assertNull(contactsDAO.get(1L));
 
-        assertNull(contactsDAO.get(3));
+        assertNull(contactsDAO.get(3L));
 
         assertNotNull(cinemaDAO.get("Бочарова"));
     }

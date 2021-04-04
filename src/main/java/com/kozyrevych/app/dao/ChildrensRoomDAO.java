@@ -1,5 +1,7 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
+import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.ChildrensRoom;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ChildrensRoomDAO {
+public class ChildrensRoomDAO implements DAO<ChildrensRoom, Long>{
     private SessionFactory factory;
 
     @Autowired
@@ -18,6 +20,7 @@ public class ChildrensRoomDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(ChildrensRoom ChildrensRoom) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -26,10 +29,12 @@ public class ChildrensRoomDAO {
         }
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Long id) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             ChildrensRoom c = get(id);
+            c = (ChildrensRoom) session.merge(c);
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -39,6 +44,7 @@ public class ChildrensRoomDAO {
         }
     }
 
+    @Override
     public void update(ChildrensRoom childrensRoom) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -51,12 +57,14 @@ public class ChildrensRoomDAO {
         }
     }
 
-    public ChildrensRoom get(long id) {
+    @Override
+    public ChildrensRoom get(Long id) {
         try (final Session session = factory.openSession()) {
             return session.get(ChildrensRoom.class, id);
         }
     }
 
+    @Override
     public List<ChildrensRoom> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from ChildrensRoom ", ChildrensRoom.class).getResultList();

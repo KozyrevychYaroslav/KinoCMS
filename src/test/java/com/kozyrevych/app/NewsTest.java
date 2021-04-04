@@ -6,6 +6,8 @@ import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.News;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -13,24 +15,12 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class NewsTest {
-    private static SessionFactory sessionFactory = null;
-    private static NewsDAO newsDAO = null;
-    private static CinemaDAO cinemaDAO = null;
-
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        cinemaDAO = new CinemaDAO(sessionFactory);
-        newsDAO = new NewsDAO(sessionFactory);
-    }
-
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
+    @Autowired
+    private NewsDAO newsDAO = null;
+    @Autowired
+    private CinemaDAO cinemaDAO = null;
 
     @Test
     @DisplayName("Add and get data to news table")

@@ -1,17 +1,11 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.CurrentFilmData;
-import com.kozyrevych.app.model.FreePlace;
-import com.kozyrevych.app.model.Gender;
-import com.kozyrevych.app.model.User;
-import lombok.NoArgsConstructor;
+import com.kozyrevych.app.model.*;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-public class UserDAO {
+public class UserDAO implements DAO<User, String>{
     private SessionFactory sessionFactory;
 
     @Autowired
@@ -30,14 +24,16 @@ public class UserDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public void save(User User) {
+    @Override
+    public void save(User user) {
         try (final Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.save(User);
+            session.save(user);
             transaction.commit();
         }
     }
 
+    @Override
     public User get(String phoneNumber) {
         try (final Session session = sessionFactory.openSession()) {
             Query query = session.createQuery("from User c where phoneNumber =: phoneNumber");
@@ -50,6 +46,7 @@ public class UserDAO {
         }
     }
 
+    @Override
     public void update(User user) {
         try (final Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -62,10 +59,12 @@ public class UserDAO {
         }
     }
 
+    @Override
     public void delete(String phoneNumber) {
         try (final Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             User c = get(phoneNumber);
+            c = (User) session.merge(c);
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -75,6 +74,7 @@ public class UserDAO {
         }
     }
 
+    @Override
     public List<User> getAll() {
         try (final Session session = sessionFactory.openSession()) {
             return session.createQuery("from User", User.class).getResultList();

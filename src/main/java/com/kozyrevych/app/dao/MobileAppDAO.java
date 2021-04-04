@@ -1,5 +1,7 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
+import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.MobileApp;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class MobileAppDAO {
+public class MobileAppDAO implements DAO<MobileApp, Long>{
     private SessionFactory factory;
 
     @Autowired
@@ -18,6 +20,7 @@ public class MobileAppDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(MobileApp MobileApp) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -26,10 +29,12 @@ public class MobileAppDAO {
         }
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Long id) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             MobileApp c = get(id);
+            c = (MobileApp) session.merge(c);
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -39,6 +44,7 @@ public class MobileAppDAO {
         }
     }
 
+    @Override
     public void update(MobileApp mobileApp) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -51,12 +57,14 @@ public class MobileAppDAO {
         }
     }
 
-    public MobileApp get(long id) {
+    @Override
+    public MobileApp get(Long id) {
         try (final Session session = factory.openSession()) {
             return session.get(MobileApp.class, id);
         }
     }
 
+    @Override
     public List<MobileApp> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from MobileApp ", MobileApp.class).getResultList();

@@ -1,5 +1,7 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
+import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.CurrentFilmData;
 import com.kozyrevych.app.model.User;
 import org.hibernate.Hibernate;
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-public class CurrentFilmDataDAO {
+public class CurrentFilmDataDAO implements DAO<CurrentFilmData, Long> {
     private SessionFactory factory;
 
     @Autowired
@@ -21,6 +23,7 @@ public class CurrentFilmDataDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(CurrentFilmData currentFilmData) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -29,12 +32,14 @@ public class CurrentFilmDataDAO {
         }
     }
 
-    public CurrentFilmData get(long id) {
+    @Override
+    public CurrentFilmData get(Long id) {
         try (final Session session = factory.openSession()) {
             return session.get(CurrentFilmData.class, id);
         }
     }
 
+    @Override
     public void update(CurrentFilmData currentFilmData) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -47,11 +52,11 @@ public class CurrentFilmDataDAO {
         }
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Long id) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             CurrentFilmData c = session.get(CurrentFilmData.class, id);
-
             // так как currentFilmData является главной таблицей в связи manyToMany, а мы решили удалить элемент из нее,
             // то сначала надо очистить все ссылки на нее из таблицы User
             c.removeCurrentFilmDataFromUsers();
@@ -66,6 +71,7 @@ public class CurrentFilmDataDAO {
         }
     }
 
+    @Override
     public List<CurrentFilmData> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from CurrentFilmData", CurrentFilmData.class).getResultList();

@@ -6,30 +6,21 @@ import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.Image;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class ImageTest {
-    private static SessionFactory sessionFactory = null;
-    private static ImageDAO imageDAO = null;
-    private static CinemaDAO cinemaDAO = null;
+    @Autowired
+    private ImageDAO imageDAO = null;
+    @Autowired
+    private  CinemaDAO cinemaDAO = null;
 
-    @BeforeAll
-    @DisplayName("Start session factory")
-    public static void configStart() {
-        sessionFactory = SessionFactoryUtil.getSessionFactory();
-        cinemaDAO = new CinemaDAO(sessionFactory);
-        imageDAO = new ImageDAO(sessionFactory);
-    }
-
-    @AfterAll
-    @DisplayName("close session factory")
-    public static void configEnd() {
-        SessionFactoryUtil.closeSessionFactory();
-    }
 
     @Test
     @DisplayName("Add and get data to image table")

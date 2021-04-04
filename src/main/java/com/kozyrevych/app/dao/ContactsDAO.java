@@ -1,5 +1,7 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
+import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.Contacts;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ContactsDAO {
+public class ContactsDAO implements DAO<Contacts, Long>{
     private SessionFactory factory;
 
     @Autowired
@@ -18,6 +20,7 @@ public class ContactsDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(Contacts contacts) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -26,10 +29,12 @@ public class ContactsDAO {
         }
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Long id) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Contacts c = get(id);
+            c = (Contacts) session.merge(c);
             try {
                 session.delete(c);
             } catch (IllegalArgumentException e) {
@@ -39,6 +44,7 @@ public class ContactsDAO {
         }
     }
 
+    @Override
     public void update(Contacts contacts) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -51,12 +57,14 @@ public class ContactsDAO {
         }
     }
 
-    public Contacts get(long id) {
+    @Override
+    public Contacts get(Long id) {
         try (final Session session = factory.openSession()) {
             return session.get(Contacts.class, id);
         }
     }
 
+    @Override
     public List<Contacts> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from Contacts ", Contacts.class).getResultList();

@@ -31,6 +31,7 @@ public class User {
     private String phoneNumber = "";
 
     @Email(message = "Incorrect email")
+    @NotNull
     private String email = "";
 
     @Size(min = 2, max = 30, message = "Incorrect size")
@@ -40,6 +41,7 @@ public class User {
     @NotNull
     private String password = "";
 
+    @NotNull(message = "empty birthday")
     private LocalDate birthday;
 
     @Column(name = "registration_date")

@@ -1,5 +1,6 @@
 package com.kozyrevych.app.dao;
 
+import com.kozyrevych.app.model.Advertising;
 import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.CurrentFilmData;
 import com.kozyrevych.app.model.FilmData;
@@ -12,13 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.NoResultException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
-public class FilmDataDAO {
+public class FilmDataDAO implements DAO<FilmData, String> {
     private SessionFactory factory;
 
     @Autowired
@@ -26,6 +25,7 @@ public class FilmDataDAO {
         this.factory = factory;
     }
 
+    @Override
     public void save(FilmData filmData) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -34,6 +34,7 @@ public class FilmDataDAO {
         }
     }
 
+    @Override
     public FilmData get(String title) {
         try (final Session session = factory.openSession()) {
             Query query = session.createQuery("from FilmData c where filmTitle =: title");
@@ -46,6 +47,7 @@ public class FilmDataDAO {
         }
     }
 
+    @Override
     public void update(FilmData filmData) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -58,6 +60,7 @@ public class FilmDataDAO {
         }
     }
 
+    @Override
     public void delete(String title) {
         try (final Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -77,6 +80,7 @@ public class FilmDataDAO {
         }
     }
 
+    @Override
     public List<FilmData> getAll() {
         try (final Session session = factory.openSession()) {
             return session.createQuery("from FilmData", FilmData.class).getResultList();
