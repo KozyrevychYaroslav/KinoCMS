@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.dao.MobileAppDAO;
 import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.MobileApp;
+import com.kozyrevych.app.services.CinemaService;
+import com.kozyrevych.app.services.MobilleAppService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class MobileAppTest {
     @Autowired
-    private MobileAppDAO mobileAppDAO = null;
+    private MobilleAppService mobileAppService = null;
     @Autowired
-    private CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
     @Test
     @DisplayName("Add and get data to mobileApp table")
@@ -34,15 +34,15 @@ public class MobileAppTest {
         mobileApp.setCinema(cinema);
         mobileApp.setInfo("some info 1");
         cinema.setMobileApp(mobileApp);
-        cinemaDAO.save(cinema);
-        assertEquals(mobileApp, mobileAppDAO.get(1L));
+        cinemaService.save(cinema);
+        assertEquals(mobileApp, mobileAppService.get(1L));
     }
 
     @Test
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(mobileAppDAO.get(1L), cinemaDAO.getMobileApp("Высоцкого"));
+        assertEquals(mobileAppService.get(1L), cinemaService.getMobileApp("Высоцкого"));
     }
 
     @Test
@@ -59,9 +59,9 @@ public class MobileAppTest {
         mobileApp.setCinema(cinema);
         mobileApp.setInfo("some info 2");
         cinema.setMobileApp(mobileApp);
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(2, mobileAppDAO.getAll().size());
+        assertEquals(2, mobileAppService.getAll().size());
     }
 
 
@@ -69,34 +69,34 @@ public class MobileAppTest {
     @DisplayName("Delete data from mobileApp table using Cinema and mobileApp")
     @Order(5)
     public void m5() {
-        assertEquals(2, cinemaDAO.getAll().size());
+        assertEquals(2, cinemaService.getAll().size());
 
-        cinemaDAO.delete("Высоцкого");
+        cinemaService.deleteByName("Высоцкого");
 
-        assertEquals(1, cinemaDAO.getAll().size());
+        assertEquals(1, cinemaService.getAll().size());
 
-        assertEquals(1, mobileAppDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(1, mobileAppService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(cinemaDAO.get("Высоцкого"));
+        assertNull(cinemaService.getByName("Высоцкого"));
     }
 
     @Test
     @DisplayName("update data in mobileApp table")
     @Order(6)
     public void m6() {
-        MobileApp mobileApp = mobileAppDAO.get(2L);
+        MobileApp mobileApp = mobileAppService.get(2L);
 
         mobileApp.setInfo("UPDATED info");
-        mobileAppDAO.update(mobileApp);
+        mobileAppService.update(mobileApp);
 
-        assertEquals(mobileApp, mobileAppDAO.get(2L));
+        assertEquals(mobileApp, mobileAppService.get(2L));
 
-        mobileAppDAO.delete(2L);
+        mobileAppService.deleteById(2L);
 
-        assertNull(mobileAppDAO.get(1L));
+        assertNull(mobileAppService.get(1L));
 
-        assertNull(mobileAppDAO.get(3L));
+        assertNull(mobileAppService.get(3L));
 
-        assertNotNull(cinemaDAO.get("Бочарова"));
+        assertNotNull(cinemaService.getByName("Бочарова"));
     }
 }

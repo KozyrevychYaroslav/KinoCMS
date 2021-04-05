@@ -6,10 +6,10 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
-public interface DAO<T, V> {
+public interface DAO<T> {
     public void save(T val);
-    public void delete(V id);
+    public void delete(T val);
     public void update(T val);
-    public T get(V id);
+    public T get(long id);
     public List<T> getAll();
 }

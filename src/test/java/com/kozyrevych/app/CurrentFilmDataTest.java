@@ -1,7 +1,10 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.*;
 import com.kozyrevych.app.model.*;
+import com.kozyrevych.app.services.CinemaService;
+import com.kozyrevych.app.services.CurrentFilmDataService;
+import com.kozyrevych.app.services.FilmDataService;
+import com.kozyrevych.app.services.FilmHallService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class CurrentFilmDataTest {
     @Autowired
-    private CurrentFilmDataDAO currentFilmDataDAO = null;
+    private CurrentFilmDataService currentFilmDataService = null;
     @Autowired
-    private FilmDataDAO filmDataDAO = null;
+    private FilmDataService filmDataService = null;
     @Autowired
-    private FilmHallDAO filmHallDAO = null;
+    private FilmHallService filmHallService = null;
     @Autowired
-    private  CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
     @Test
     @DisplayName("Add and get data to currentFilmData table")
@@ -66,12 +69,12 @@ public class CurrentFilmDataTest {
         currentFilmData.setVip(true);
         currentFilmData.setFilmData(filmData);
         currentFilmData.setFilmHall(filmHall);
-
         filmHall.setCurrentFilmsData(Collections.singleton(currentFilmData));
+        filmData.setCurrentFilmData(Collections.singleton(currentFilmData));
 
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(currentFilmData, currentFilmDataDAO.get(1L));
+        assertEquals(currentFilmData, currentFilmDataService.get(1L));
     }
 
     @Test
@@ -86,15 +89,15 @@ public class CurrentFilmDataTest {
         currentFilmData.setDBOX(true);
         currentFilmData.setPrice(150);
         currentFilmData.setVip(false);
-        currentFilmData.setFilmData(filmDataDAO.get("Film title #1"));
+        currentFilmData.setFilmData(filmDataService.getByTitle("Film title #1"));
 
         //в одном зале теперь показываются два фильма одного типа, в разное время
-        currentFilmData.setFilmHall(filmHallDAO.get(10));
-        currentFilmDataDAO.save(currentFilmData);
+        currentFilmData.setFilmHall(filmHallService.getByFilmHallNumber(10));
+        currentFilmDataService.save(currentFilmData);
 
 
-        assertEquals(Set.of(currentFilmDataDAO.get(1L), currentFilmData), filmDataDAO.getCurrentFilmDatas(1));
-        assertEquals(Set.of(currentFilmDataDAO.get(1L), currentFilmData), filmHallDAO.getCurrentFilmDatas(1));
+        assertEquals(Set.of(currentFilmDataService.get(1L), currentFilmData), filmDataService.getCurrentFilmDatas(1));
+        assertEquals(Set.of(currentFilmDataService.get(1L), currentFilmData), filmHallService.getCurrentFilmDatas(1));
     }
 
 
@@ -102,9 +105,9 @@ public class CurrentFilmDataTest {
     @DisplayName("Get all rows from currentFilmData table and currentFilmDate")
     @Order(4)
     public void m4() {
-        assertEquals(2, currentFilmDataDAO.getAll().size());
-        assertEquals(2, filmDataDAO.getCurrentFilmDatas(1).size());
-        assertEquals(2, filmHallDAO.getCurrentFilmDatas(1).size());
+        assertEquals(2, currentFilmDataService.getAll().size());
+        assertEquals(2, filmDataService.getCurrentFilmDatas(1).size());
+        assertEquals(2, filmHallService.getCurrentFilmDatas(1).size());
     }
 
     @Test
@@ -112,7 +115,7 @@ public class CurrentFilmDataTest {
     @Order(5)
     public void m5() {
         CurrentFilmData currentFilmData = new CurrentFilmData();
-        FilmData filmData = filmDataDAO.get("Film title #1");
+        FilmData filmData = filmDataService.getByTitle("Film title #1");
 
         currentFilmData.setFilmTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
         currentFilmData.setDBOX(true);
@@ -121,19 +124,19 @@ public class CurrentFilmDataTest {
         currentFilmData.setPrice(200);
         currentFilmData.setVip(true);
         currentFilmData.setFilmData(filmData);
-        currentFilmData.setFilmHall(filmHallDAO.get(10));
+        currentFilmData.setFilmHall(filmHallService.getByFilmHallNumber(10));
 
-        currentFilmDataDAO.save(currentFilmData);
+        currentFilmDataService.save(currentFilmData);
 
-        assertEquals(3, currentFilmDataDAO.getAll().size());
+        assertEquals(3, currentFilmDataService.getAll().size());
 
-        filmDataDAO.delete("Film title #1");
+        filmDataService.deleteByTitle("Film title #1");
 
-        assertEquals(0, filmDataDAO.getAll().size());
+        assertEquals(0, filmDataService.getAll().size());
 
-        assertEquals(0, currentFilmDataDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(0, currentFilmDataService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(filmDataDAO.get("Film title #1"));
+        assertNull(filmDataService.getByTitle("Film title #1"));
     }
 
     @Test
@@ -163,21 +166,21 @@ public class CurrentFilmDataTest {
         currentFilmData.setPrice(90);
         currentFilmData.setVip(true);
         currentFilmData.setFilmData(filmData);
-        currentFilmData.setFilmHall(filmHallDAO.get(10));
+        currentFilmData.setFilmHall(filmHallService.getByFilmHallNumber(10));
         filmData.setCurrentFilmData(Collections.singleton(currentFilmData));
-        filmDataDAO.save(filmData);
+        filmDataService.save(filmData);
 
         currentFilmData.setPrice(123);
-        currentFilmDataDAO.update(currentFilmData);
+        currentFilmDataService.update(currentFilmData);
 
-        assertEquals(currentFilmData, currentFilmDataDAO.get(4L));
+        assertEquals(currentFilmData, currentFilmDataService.get(4L));
 
-        currentFilmDataDAO.delete(4L);
+        currentFilmDataService.deleteById(4L);
 
-        assertNull(currentFilmDataDAO.get(4L));
+        assertNull(currentFilmDataService.get(4L));
 
-        assertNotNull(filmDataDAO.get("Film title #1"));
-        assertNotNull(filmHallDAO.get(10));
+        assertNotNull(filmDataService.getByTitle("Film title #1"));
+        assertNotNull(filmHallService.getByFilmHallNumber(10));
     }
 
 

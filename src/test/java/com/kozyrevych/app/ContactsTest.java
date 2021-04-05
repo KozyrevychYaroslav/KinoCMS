@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.dao.ContactsDAO;
 import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.Contacts;
+import com.kozyrevych.app.services.CinemaService;
+import com.kozyrevych.app.services.ContactsService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class ContactsTest {
     @Autowired
-    private  ContactsDAO contactsDAO = null;
+    private ContactsService contactsService = null;
     @Autowired
-    private CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
 
 
@@ -34,16 +34,16 @@ public class ContactsTest {
         contacts.setInfo("some info 1");
         contacts.setCinema(cinema);
         cinema.setContacts(contacts);
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(contacts, contactsDAO.get(1L));
+        assertEquals(contacts, contactsService.get(1L));
     }
 
     @Test
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(contactsDAO.get(1L), cinemaDAO.getContacts("Высоцкого"));
+        assertEquals(contactsService.get(1L), cinemaService.getContacts("Высоцкого"));
     }
 
     @Test
@@ -59,9 +59,9 @@ public class ContactsTest {
         contacts.setInfo("some info 2");
         contacts.setCinema(cinema);
         cinema.setContacts(contacts);
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(2, contactsDAO.getAll().size());
+        assertEquals(2, contactsService.getAll().size());
     }
 
 
@@ -69,34 +69,34 @@ public class ContactsTest {
     @DisplayName("Delete data from contacts table using Cinema and contacts")
     @Order(5)
     public void m5() {
-        assertEquals(2, cinemaDAO.getAll().size());
+        assertEquals(2, cinemaService.getAll().size());
 
-        cinemaDAO.delete("Высоцкого");
+        cinemaService.deleteByName("Высоцкого");
 
-        assertEquals(1, cinemaDAO.getAll().size());
+        assertEquals(1, cinemaService.getAll().size());
 
-        assertEquals(1, contactsDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(1, contactsService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(cinemaDAO.get("Высоцкого"));
+        assertNull(cinemaService.getByName("Высоцкого"));
     }
 
     @Test
     @DisplayName("update data in contacts table")
     @Order(6)
     public void m6() {
-        Contacts contacts = contactsDAO.get(2L);
+        Contacts contacts = contactsService.get(2L);
 
         contacts.setInfo("UPDATED info");
-        contactsDAO.update(contacts);
+        contactsService.update(contacts);
 
-        assertEquals(contacts, contactsDAO.get(2L));
+        assertEquals(contacts, contactsService.get(2L));
 
-        contactsDAO.delete(2L);
+        contactsService.deleteById(2L);
 
-        assertNull(contactsDAO.get(1L));
+        assertNull(contactsService.get(1L));
 
-        assertNull(contactsDAO.get(3L));
+        assertNull(contactsService.get(3L));
 
-        assertNotNull(cinemaDAO.get("Бочарова"));
+        assertNotNull(cinemaService.getByName("Бочарова"));
     }
 }

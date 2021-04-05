@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.dao.ImageDAO;
 import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.Image;
+import com.kozyrevych.app.services.CinemaService;
+import com.kozyrevych.app.services.ImageService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class ImageTest {
     @Autowired
-    private ImageDAO imageDAO = null;
+    private ImageService imageService = null;
     @Autowired
-    private  CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
 
     @Test
@@ -37,9 +37,9 @@ public class ImageTest {
         image.setImageName("Image name 1");
         image.setImagePath("com/kozyrevych/app");
         cinema.setImages(Collections.singleton(image));
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(image, imageDAO.get("Image name 1"));
+        assertEquals(image, imageService.getByName("Image name 1"));
     }
 
     @Test
@@ -48,12 +48,12 @@ public class ImageTest {
     public void m2() {
         Image image = new Image();
 
-        image.setCinema(cinemaDAO.get("Высоцкого"));
+        image.setCinema(cinemaService.getByName("Высоцкого"));
         image.setImageName("Image name 2");
         image.setImagePath("com/kozyrevych/app");
-        imageDAO.save(image);
+        imageService.save(image);
 
-        assertEquals(Set.of(imageDAO.get("Image name 1"), image), cinemaDAO.getImages("Высоцкого"));
+        assertEquals(Set.of(imageService.getByName("Image name 1"), image), cinemaService.getImages("Высоцкого"));
     }
 
 
@@ -61,7 +61,7 @@ public class ImageTest {
     @DisplayName("Get all rows from Image table")
     @Order(4)
     public void m4() {
-        assertEquals(2, imageDAO.getAll().size());
+        assertEquals(2, imageService.getAll().size());
     }
 
     @Test
@@ -69,22 +69,22 @@ public class ImageTest {
     @Order(5)
     public void m5() {
         Image image = new Image();
-        Cinema cinema = cinemaDAO.get("Высоцкого");
+        Cinema cinema = cinemaService.getByName("Высоцкого");
 
         image.setCinema(cinema);
         image.setImageName("Image name 3");
         image.setImagePath("com/kozyrevych/app");
-        imageDAO.save(image);
+        imageService.save(image);
 
-        assertEquals(3, imageDAO.getAll().size());
+        assertEquals(3, imageService.getAll().size());
 
-        cinemaDAO.delete(cinema.getCinemaName());
+        cinemaService.deleteByName(cinema.getCinemaName());
 
-        assertEquals(0, cinemaDAO.getAll().size());
+        assertEquals(0, cinemaService.getAll().size());
 
-        assertEquals(0, imageDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(0, imageService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(cinemaDAO.get("Высоцкого"));
+        assertNull(cinemaService.getByName("Высоцкого"));
 
     }
 
@@ -103,18 +103,18 @@ public class ImageTest {
         image.setImageName("Image name 1");
         image.setImagePath("com/kozyrevych/app");
         cinema.setImages(Collections.singleton(image));
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
         image.setImageName("UPDATED name");
-        imageDAO.update(image);
+        imageService.update(image);
 
-        assertEquals(image, imageDAO.get("UPDATED name"));
+        assertEquals(image, imageService.getByName("UPDATED name"));
 
-        imageDAO.delete("UPDATED name");
+        imageService.deleteByName("UPDATED name");
 
-        assertNull(imageDAO.get("UPDATED name"));
+        assertNull(imageService.getByName("UPDATED name"));
 
-        assertNotNull(cinemaDAO.get("Высоцкого"));
+        assertNotNull(cinemaService.getByName("Высоцкого"));
     }
 
 

@@ -27,13 +27,13 @@ public class Cinema {
     @Size(min = 5, max = 80, message = "Incorrect size")
     private String address = "";
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL)
     private Set<Stock> stocks;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL)
     private Set<FilmHall> filmHalls;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL)
     private Set<News> news;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -43,22 +43,22 @@ public class Cinema {
             inverseJoinColumns = @JoinColumn(name = "film_data_id"))
     private Set<FilmData> filmsData;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL)
     private Contacts contacts;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL)
     private MobileApp mobileApp;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL)
     private ChildrensRoom childrensRoom;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL)
     private CafeBar cafeBar;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cinema", cascade = CascadeType.ALL)
     private Set<Image> images;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "cinema", cascade = CascadeType.ALL)
     private Advertising advertising;
 
     @Override

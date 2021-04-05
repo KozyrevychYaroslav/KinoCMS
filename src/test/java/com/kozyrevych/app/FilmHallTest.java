@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.dao.FilmHallDAO;
 import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.FilmHall;
+import com.kozyrevych.app.services.CinemaService;
+import com.kozyrevych.app.services.FilmHallService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class FilmHallTest {
     @Autowired
-    private FilmHallDAO filmHallDAO = null;
+    private FilmHallService filmHallService = null;
     @Autowired
-    private CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
     @Test
     @DisplayName("Add and get data to filmHall table")
@@ -35,9 +35,9 @@ public class FilmHallTest {
         filmHall.setInfo("Film hall №1 info");
         filmHall.setFilmHallNumber(10);
         cinema.setFilmHalls(Collections.singleton(filmHall));
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(filmHall, filmHallDAO.get(10));
+        assertEquals(filmHall, filmHallService.getByFilmHallNumber(10));
     }
 
     @Test
@@ -46,13 +46,13 @@ public class FilmHallTest {
     public void m2() {
         FilmHall filmHall = new FilmHall();
 
-        filmHall.setCinema(cinemaDAO.get("Высоцкого"));
+        filmHall.setCinema(cinemaService.getByName("Высоцкого"));
         filmHall.setInfo("Film hall №2 info");
         filmHall.setFilmHallNumber(11);
 
-        filmHallDAO.save(filmHall);
+        filmHallService.save(filmHall);
 
-        assertEquals(Set.of(filmHallDAO.get(10), filmHall), cinemaDAO.getFilmHalls("Высоцкого"));
+        assertEquals(Set.of(filmHallService.getByFilmHallNumber(10), filmHall), cinemaService.getFilmHalls("Высоцкого"));
     }
 
 
@@ -60,7 +60,7 @@ public class FilmHallTest {
     @DisplayName("Get all rows from filmHall table")
     @Order(4)
     public void m4() {
-        assertEquals(2, filmHallDAO.getAll().size());
+        assertEquals(2, filmHallService.getAll().size());
     }
 
     @Test
@@ -68,22 +68,22 @@ public class FilmHallTest {
     @Order(5)
     public void m5() {
         FilmHall filmHall = new FilmHall();
-        Cinema cinema = cinemaDAO.get("Высоцкого");
+        Cinema cinema = cinemaService.getByName("Высоцкого");
 
         filmHall.setCinema(cinema);
         filmHall.setInfo("Film hall №3 info");
         filmHall.setFilmHallNumber(12);
-        filmHallDAO.save(filmHall);
+        filmHallService.save(filmHall);
 
-        assertEquals(3, filmHallDAO.getAll().size());
+        assertEquals(3, filmHallService.getAll().size());
 
-        cinemaDAO.delete(cinema.getCinemaName());
+        cinemaService.deleteByName(cinema.getCinemaName());
 
-        assertEquals(0, cinemaDAO.getAll().size());
+        assertEquals(0, cinemaService.getAll().size());
 
-        assertEquals(0, filmHallDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(0, filmHallService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(cinemaDAO.get("Высоцкого"));
+        assertNull(cinemaService.getByName("Высоцкого"));
     }
 
     @Test
@@ -97,22 +97,23 @@ public class FilmHallTest {
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
 
-        filmHall.setCinema(cinema);
+
         filmHall.setInfo("Film hall №1 info");
         filmHall.setFilmHallNumber(1);
+        filmHall.setCinema(cinema);
         cinema.setFilmHalls(Collections.singleton(filmHall));
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
         filmHall.setFilmHallNumber(40);
-        filmHallDAO.update(filmHall);
+        filmHallService.update(filmHall);
 
-        assertEquals(filmHall, filmHallDAO.get(40));
+        assertEquals(filmHall, filmHallService.getByFilmHallNumber(40));
 
-        filmHallDAO.delete(40);
+        filmHallService.deleteByFilmHallNumber(40);
 
-        assertNull(filmHallDAO.get(40));
+        assertNull(filmHallService.getByFilmHallNumber(40));
 
-        assertNotNull(cinemaDAO.get("Высоцкого"));
+        assertNotNull(cinemaService.getByName("Высоцкого"));
     }
 
 

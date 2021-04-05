@@ -30,7 +30,7 @@ public class FreePlace {
     private int rowNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "film_hall_id", nullable = false)
+    @JoinColumn(name = "film_hall_id")
     private FilmHall filmHall;
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.AdvertisingDAO;
-import com.kozyrevych.app.dao.CinemaDAO;
 import com.kozyrevych.app.model.Advertising;
 import com.kozyrevych.app.model.Cinema;
+import com.kozyrevych.app.services.AdvertisingService;
+import com.kozyrevych.app.services.CinemaService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,9 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class AdvertisingTest {
     @Autowired
-    private AdvertisingDAO advertisingDAO;
+    private AdvertisingService advertisingService;
+
     @Autowired
-    private CinemaDAO cinemaDAO;
+    private CinemaService cinemaService;
 
     @Test
     @DisplayName("Add and get data to Advertising table")
@@ -34,16 +35,16 @@ public class AdvertisingTest {
         cinema.setInfo("some info");
         advertising.setCinema(cinema);
         cinema.setAdvertising(advertising);
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(advertising, advertisingDAO.get(1L));
+        assertEquals(advertising, advertisingService.get(1L));
     }
 
     @Test
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(advertisingDAO.get(1L), cinemaDAO.getAdvertising("Высоцкого"));
+        assertEquals(advertisingService.get(1L), cinemaService.getAdvertising("Высоцкого"));
     }
 
     @Test
@@ -59,9 +60,9 @@ public class AdvertisingTest {
         cinema.setInfo("some info");
         cinema.setAdvertising(advertising);
         advertising.setCinema(cinema);
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(2, advertisingDAO.getAll().size());
+        assertEquals(2, advertisingService.getAll().size());
     }
 
 
@@ -69,34 +70,34 @@ public class AdvertisingTest {
     @DisplayName("Delete data from Advertising table using Cinema and Advertising")
     @Order(5)
     public void m5() {
-        assertEquals(2, cinemaDAO.getAll().size());
+        assertEquals(2, cinemaService.getAll().size());
 
-        cinemaDAO.delete("Высоцкого");
+        cinemaService.deleteByName("Высоцкого");
 
-        assertEquals(1, cinemaDAO.getAll().size());
+        assertEquals(1, cinemaService.getAll().size());
 
-        assertEquals(1, advertisingDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(1, advertisingService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(cinemaDAO.get("Высоцкого"));
+        assertNull(cinemaService.getByName("Высоцкого"));
     }
 
     @Test
     @DisplayName("update data in Advertising table")
     @Order(6)
     public void m6() {
-        Advertising advertising = advertisingDAO.get(2L);
+        Advertising advertising = advertisingService.get(2L);
 
         advertising.setInfo("UPDATED info");
-        advertisingDAO.update(advertising);
+        advertisingService.update(advertising);
 
-        assertEquals(advertising, advertisingDAO.get(2L));
+        assertEquals(advertising, advertisingService.get(2L));
 
-        advertisingDAO.delete(2L);
+        advertisingService.deleteById(2L);
 
-        assertNull(advertisingDAO.get(1L));
+        assertNull(advertisingService.get(1L));
 
-        assertNull(advertisingDAO.get(3L));
+        assertNull(advertisingService.get(3L));
 
-        assertNotNull(cinemaDAO.get("Бочарова"));
+        assertNotNull(cinemaService.getByName("Бочарова"));
     }
 }

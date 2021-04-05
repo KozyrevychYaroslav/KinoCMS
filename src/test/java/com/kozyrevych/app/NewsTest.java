@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.dao.NewsDAO;
 import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.News;
+import com.kozyrevych.app.services.CinemaService;
+import com.kozyrevych.app.services.NewsService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class NewsTest {
     @Autowired
-    private NewsDAO newsDAO = null;
+    private NewsService newsService = null;
     @Autowired
-    private CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
     @Test
     @DisplayName("Add and get data to news table")
@@ -38,9 +38,9 @@ public class NewsTest {
         news.setDate(LocalDate.now());
         news.setNewsTitle("Новость №1");
         cinema.setNews(Collections.singleton(news));
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(news, newsDAO.get("Новость №1"));
+        assertEquals(news, newsService.getByName("Новость №1"));
     }
 
     @Test
@@ -49,14 +49,14 @@ public class NewsTest {
     public void m2() {
         News news = new News();
 
-        news.setCinema(cinemaDAO.get("Высоцкого"));
+        news.setCinema(cinemaService.getByName("Высоцкого"));
         news.setInfo("Новость №2 info");
         news.setDate(LocalDate.now());
         news.setNewsTitle("Новость №2");
 
-        newsDAO.save(news);
+        newsService.save(news);
 
-        assertEquals(Set.of(newsDAO.get("Новость №1"), news), cinemaDAO.getNews("Высоцкого"));
+        assertEquals(Set.of(newsService.getByName("Новость №1"), news), cinemaService.getNews("Высоцкого"));
     }
 
 
@@ -64,7 +64,7 @@ public class NewsTest {
     @DisplayName("Get all rows from news table")
     @Order(4)
     public void m4() {
-        assertEquals(2, newsDAO.getAll().size());
+        assertEquals(2, newsService.getAll().size());
     }
 
     @Test
@@ -72,23 +72,23 @@ public class NewsTest {
     @Order(5)
     public void m5() {
         News news = new News();
-        Cinema cinema = cinemaDAO.get("Высоцкого");
+        Cinema cinema = cinemaService.getByName("Высоцкого");
 
         news.setCinema(cinema);
         news.setInfo("Новость №3 info");
         news.setDate(LocalDate.now());
         news.setNewsTitle("Новость №3");
-        newsDAO.save(news);
+        newsService.save(news);
 
-        assertEquals(3, newsDAO.getAll().size());
+        assertEquals(3, newsService.getAll().size());
 
-        cinemaDAO.delete(cinema.getCinemaName());
+        cinemaService.deleteByName(cinema.getCinemaName());
 
-        assertEquals(0, cinemaDAO.getAll().size());
+        assertEquals(0, cinemaService.getAll().size());
 
-        assertEquals(0, newsDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(0, newsService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(cinemaDAO.get("Высоцкого"));
+        assertNull(cinemaService.getByName("Высоцкого"));
     }
 
     @Test
@@ -107,18 +107,18 @@ public class NewsTest {
         news.setDate(LocalDate.now());
         news.setNewsTitle("Новость №1");
         cinema.setNews(Collections.singleton(news));
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
         news.setNewsTitle("UPDATED name");
-        newsDAO.update(news);
+        newsService.update(news);
 
-        assertEquals(news, newsDAO.get("UPDATED name"));
+        assertEquals(news, newsService.getByName("UPDATED name"));
 
-        newsDAO.delete("UPDATED name");
+        newsService.deleteByName("UPDATED name");
 
-        assertNull(newsDAO.get("UPDATED name"));
+        assertNull(newsService.getByName("UPDATED name"));
 
-        assertNotNull(cinemaDAO.get("Высоцкого"));
+        assertNotNull(cinemaService.getByName("Высоцкого"));
     }
 
 

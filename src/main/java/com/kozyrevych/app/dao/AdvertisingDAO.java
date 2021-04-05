@@ -7,65 +7,45 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Component
-public class AdvertisingDAO implements DAO<Advertising, Long> {
-    private SessionFactory factory;
-
-    @Autowired
-    public AdvertisingDAO(SessionFactory factory) {
-        this.factory = factory;
-    }
+public class AdvertisingDAO implements DAO<Advertising> {
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Override
     public void save(Advertising advertising) {
-        try (final Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            session.save(advertising);
-            transaction.commit();
-        }
+        entityManager.persist(advertising);
     }
 
     @Override
-    public void delete(Long id) {
-        try (final Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            Advertising c = get(id);
-            c = (Advertising) session.merge(c);
-            try {
-                session.delete(c);
-            } catch (IllegalArgumentException e) {
-                System.out.println("No advertising with id: " + id + " in database ");
-            }
-            transaction.commit();
+    public void delete(Advertising advertising) {
+        try {
+            entityManager.remove(advertising);
+        } catch (IllegalArgumentException e) {
+            System.out.println("No advertising: " + advertising);
         }
     }
 
     @Override
     public void update(Advertising advertising) {
-        try (final Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            try {
-                session.update(advertising);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Can't update cafe bar");
-            }
-            transaction.commit();
+        try {
+            entityManager.merge(advertising);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Can't update cafe bar");
         }
     }
 
     @Override
-    public Advertising get(Long id) {
-        try (final Session session = factory.openSession()) {
-            return session.get(Advertising.class, id);
-        }
+    public Advertising get(long id) {
+        return entityManager.find(Advertising.class, id);
     }
 
     @Override
     public List<Advertising> getAll() {
-        try (final Session session = factory.openSession()) {
-            return session.createQuery("from Advertising", Advertising.class).getResultList();
-        }
+        return entityManager.createQuery("from Advertising", Advertising.class).getResultList();
     }
 }

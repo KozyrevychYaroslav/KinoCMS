@@ -1,94 +1,65 @@
 package com.kozyrevych.app.dao;
 
-import com.kozyrevych.app.model.Advertising;
-import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.CurrentFilmData;
 import com.kozyrevych.app.model.User;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Set;
 
 @Component
-public class CurrentFilmDataDAO implements DAO<CurrentFilmData, Long> {
-    private SessionFactory factory;
-
-    @Autowired
-    public CurrentFilmDataDAO(SessionFactory factory) {
-        this.factory = factory;
-    }
+public class CurrentFilmDataDAO implements DAO<CurrentFilmData> {
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void save(CurrentFilmData currentFilmData) {
-        try (final Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            session.save(currentFilmData);
-            transaction.commit();
-        }
+        entityManager.unwrap(Session.class).save(currentFilmData);;
+
     }
 
     @Override
-    public CurrentFilmData get(Long id) {
-        try (final Session session = factory.openSession()) {
-            return session.get(CurrentFilmData.class, id);
-        }
+    public CurrentFilmData get(long id) {
+        return entityManager.find(CurrentFilmData.class, id);
     }
 
     @Override
     public void update(CurrentFilmData currentFilmData) {
-        try (final Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            try {
-                session.update(currentFilmData);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Can't update CurrentFilmData");
-            }
-            transaction.commit();
+        try {
+            entityManager.merge(currentFilmData);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Can't update CurrentFilmData");
         }
     }
 
     @Override
-    public void delete(Long id) {
-        try (final Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            CurrentFilmData c = session.get(CurrentFilmData.class, id);
-            // так как currentFilmData является главной таблицей в связи manyToMany, а мы решили удалить элемент из нее,
-            // то сначала надо очистить все ссылки на нее из таблицы User
-            c.removeCurrentFilmDataFromUsers();
-
-            try {
-                session.delete(c);
-            } catch (IllegalArgumentException e) {
-                System.out.println("No CurrentFilmData with id: " + id + " in database ");
-                transaction.rollback();
-            }
-            transaction.commit();
+    public void delete(CurrentFilmData currentFilmData) {
+        try {
+            entityManager.remove(currentFilmData);
+        } catch (IllegalArgumentException e) {
+            System.out.println("No CurrentFilmData: " + currentFilmData + " in database ");
         }
     }
 
     @Override
     public List<CurrentFilmData> getAll() {
-        try (final Session session = factory.openSession()) {
-            return session.createQuery("from CurrentFilmData", CurrentFilmData.class).getResultList();
-        }
-
+        return entityManager.createQuery("from CurrentFilmData", CurrentFilmData.class).getResultList();
     }
 
-    public Set<User> getUsers(long id) {
-        try (final Session session = factory.openSession()) {
-            CurrentFilmData c = session.get(CurrentFilmData.class, id);
-            Hibernate.initialize(c.getUsers());
-            return c.getUsers();
-        } catch (NullPointerException e) {
-            System.out.println("No id: " + id);
-            return null;
+    public long getNumberOfCurrentFilmData(long id ) {
+        try {
+            return  (Long) entityManager.
+                    createQuery("select count(*) from CurrentFilmData cfd " +
+                            "join cfd.users u " +
+                            "where cfd.id =: id group by cfd.id").setParameter("id", id).getSingleResult();
+        } catch (NoResultException e) {
+            return 0;
         }
     }
-
 
 }

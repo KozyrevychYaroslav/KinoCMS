@@ -29,10 +29,10 @@ public class FilmHall {
     @JoinColumn(name = "cinema_id")
     private Cinema cinema;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmHall", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmHall", cascade = CascadeType.ALL)
     private Set<FreePlace> freePlaces;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmHall", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmHall", cascade = CascadeType.ALL)
     private Set<CurrentFilmData> currentFilmsData;
 
     @Override

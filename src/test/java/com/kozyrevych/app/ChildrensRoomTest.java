@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.ChildrensRoomDAO;
-import com.kozyrevych.app.dao.CinemaDAO;
 import com.kozyrevych.app.model.ChildrensRoom;
 import com.kozyrevych.app.model.Cinema;
+import com.kozyrevych.app.services.ChildrensRoomService;
+import com.kozyrevych.app.services.CinemaService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class ChildrensRoomTest {
     @Autowired
-    private ChildrensRoomDAO childrensRoomDAO = null;
+    private ChildrensRoomService childrensRoomService = null;
     @Autowired
-    private CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
     @Test
     @DisplayName("Add and get data to childrensRoom table")
@@ -32,16 +32,16 @@ public class ChildrensRoomTest {
         childrensRoom.setInfo("some info 1");
         childrensRoom.setCinema(cinema);
         cinema.setChildrensRoom(childrensRoom);
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(childrensRoom, childrensRoomDAO.get(1L));
+        assertEquals(childrensRoom, childrensRoomService.get(1L));
     }
 
     @Test
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(childrensRoomDAO.get(1L), cinemaDAO.getChildrensRoom("Высоцкого"));
+        assertEquals(childrensRoomService.get(1L), cinemaService.getChildrensRoom("Высоцкого"));
     }
 
     @Test
@@ -58,9 +58,9 @@ public class ChildrensRoomTest {
         childrensRoom.setInfo("some info 2");
         childrensRoom.setCinema(cinema);
         cinema.setChildrensRoom(childrensRoom);
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(2, childrensRoomDAO.getAll().size());
+        assertEquals(2, childrensRoomService.getAll().size());
     }
 
 
@@ -68,34 +68,34 @@ public class ChildrensRoomTest {
     @DisplayName("Delete data from childrensRoom table using Cinema and childrensRoom")
     @Order(5)
     public void m5() {
-        assertEquals(2, cinemaDAO.getAll().size());
+        assertEquals(2, cinemaService.getAll().size());
 
-        cinemaDAO.delete("Высоцкого");
+        cinemaService.deleteByName("Высоцкого");
 
-        assertEquals(1, cinemaDAO.getAll().size());
+        assertEquals(1, cinemaService.getAll().size());
 
-        assertEquals(1, childrensRoomDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(1, childrensRoomService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(cinemaDAO.get("Высоцкого"));
+        assertNull(cinemaService.getByName("Высоцкого"));
     }
 
     @Test
     @DisplayName("update data in childrensRoom table")
     @Order(6)
     public void m6() {
-        ChildrensRoom childrensRoom = childrensRoomDAO.get(2L);
+        ChildrensRoom childrensRoom = childrensRoomService.get(2L);
 
         childrensRoom.setInfo("UPDATED info");
-        childrensRoomDAO.update(childrensRoom);
+        childrensRoomService.update(childrensRoom);
 
-        assertEquals(childrensRoom, childrensRoomDAO.get(2L));
+        assertEquals(childrensRoom, childrensRoomService.get(2L));
 
-        childrensRoomDAO.delete(2L);
+        childrensRoomService.deleteById(2L);
 
-        assertNull(childrensRoomDAO.get(1L));
+        assertNull(childrensRoomService.get(1L));
 
-        assertNull(childrensRoomDAO.get(3L));
+        assertNull(childrensRoomService.get(3L));
 
-        assertNotNull(cinemaDAO.get("Бочарова"));
+        assertNotNull(cinemaService.getByName("Бочарова"));
     }
 }

@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.dao.StockDAO;
 import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.Stock;
+import com.kozyrevych.app.services.CinemaService;
+import com.kozyrevych.app.services.StockService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class StockTest {
     @Autowired
-    private StockDAO stockDAO = null;
+    private StockService stockService = null;
     @Autowired
-    private CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
 
     @Test
@@ -39,9 +39,9 @@ public class StockTest {
         stock.setDate(LocalDate.now());
         stock.setTitle("Акция №1");
         cinema.setStocks(Collections.singleton(stock));
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(stock, stockDAO.get("Акция №1"));
+        assertEquals(stock, stockService.getByName("Акция №1"));
     }
 
     @Test
@@ -50,14 +50,13 @@ public class StockTest {
     public void m2() {
         Stock stock = new Stock();
 
-        stock.setCinema(cinemaDAO.get("Высоцкого"));
+        stock.setCinema(cinemaService.getByName("Высоцкого"));
         stock.setInfo("Акция №2 info");
         stock.setDate(LocalDate.now());
         stock.setTitle("Акция №2");
 
-        stockDAO.save(stock);
-
-        assertEquals(Set.of(stockDAO.get("Акция №1"), stock), cinemaDAO.getStocks("Высоцкого"));
+        stockService.save(stock);
+        assertEquals(Set.of(stockService.getByName("Акция №1"), stock), cinemaService.getStocks("Высоцкого"));
     }
 
 
@@ -65,7 +64,7 @@ public class StockTest {
     @DisplayName("Get all rows from stock table")
     @Order(4)
     public void m4() {
-        assertEquals(2, stockDAO.getAll().size());
+        assertEquals(2, stockService.getAll().size());
     }
 
     @Test
@@ -73,23 +72,23 @@ public class StockTest {
     @Order(5)
     public void m5() {
         Stock stock = new Stock();
-        Cinema cinema = cinemaDAO.get("Высоцкого");
+        Cinema cinema = cinemaService.getByName("Высоцкого");
 
         stock.setCinema(cinema);
         stock.setInfo("Акция №3 info");
         stock.setDate(LocalDate.now());
         stock.setTitle("Акция №3");
-        stockDAO.save(stock);
+        stockService.save(stock);
 
-        assertEquals(3, stockDAO.getAll().size());
+        assertEquals(3, stockService.getAll().size());
 
-        cinemaDAO.delete(cinema.getCinemaName());
+        cinemaService.deleteByName(cinema.getCinemaName());
 
-        assertEquals(0, cinemaDAO.getAll().size());
+        assertEquals(0, cinemaService.getAll().size());
 
-        assertEquals(0, stockDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(0, stockService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(cinemaDAO.get("Высоцкого"));
+        assertNull(cinemaService.getByName("Высоцкого"));
     }
 
     @Test
@@ -102,23 +101,24 @@ public class StockTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
+
         stock.setCinema(cinema);
         stock.setInfo("Акция №1 info");
         stock.setDate(LocalDate.now());
         stock.setTitle("Акция №1");
         cinema.setStocks(Collections.singleton(stock));
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
         stock.setTitle("UPDATED name");
-        stockDAO.update(stock);
+        stockService.update(stock);
 
-        assertEquals(stock, stockDAO.get("UPDATED name"));
+        assertEquals(stock, stockService.getByName("UPDATED name"));
 
-        stockDAO.delete("UPDATED name");
+        stockService.deleteByName("UPDATED name");
 
-        assertNull(stockDAO.get("UPDATED name"));
+        assertNull(stockService.getByName("UPDATED name"));
 
-        assertNotNull(cinemaDAO.get("Высоцкого"));
+        assertNotNull(cinemaService.getByName("Высоцкого"));
     }
 
 

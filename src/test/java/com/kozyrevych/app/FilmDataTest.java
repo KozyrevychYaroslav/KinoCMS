@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CinemaDAO;
-import com.kozyrevych.app.dao.FilmDataDAO;
 import com.kozyrevych.app.model.Cinema;
 import com.kozyrevych.app.model.FilmData;
+import com.kozyrevych.app.services.CinemaService;
+import com.kozyrevych.app.services.FilmDataService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SpringBootTest
 public class FilmDataTest {
     @Autowired
-    private FilmDataDAO filmDataDAO = null;
+    private FilmDataService filmDataService = null;
     @Autowired
-    private CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
     @Test
     @DisplayName("Adding data to filmData table")
@@ -40,7 +40,7 @@ public class FilmDataTest {
         filmData.setOperator("Operator #1");
         filmData.setYear(2021);
 
-        filmDataDAO.save(filmData);
+        filmDataService.save(filmData);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class FilmDataTest {
         filmData.setOperator("Operator #1");
         filmData.setYear(2021);
 
-        assertEquals(filmData, filmDataDAO.get("Film title #1"));
+        assertEquals(filmData, filmDataService.getByTitle("Film title #1"));
     }
 
     @Test
@@ -85,9 +85,9 @@ public class FilmDataTest {
         filmData.setOperator("Operator #2");
         filmData.setYear(2021);
 
-        filmDataDAO.save(filmData);
+        filmDataService.save(filmData);
 
-        assertEquals(filmData, filmDataDAO.get("Film title #2"));
+        assertEquals(filmData, filmDataService.getByTitle("Film title #2"));
 
         filmData1.setBudget(125_000);
         filmData1.setFilmTitle("Film title #1");
@@ -102,9 +102,9 @@ public class FilmDataTest {
         filmData1.setOperator("Operator #1");
         filmData1.setYear(2021);
 
-        assertEquals(filmData1, filmDataDAO.get("Film title #1"));
+        assertEquals(filmData1, filmDataService.getByTitle("Film title #1"));
 
-        assertEquals(2, filmDataDAO.getAll().size());
+        assertEquals(2, filmDataService.getAll().size());
 
     }
 
@@ -126,15 +126,15 @@ public class FilmDataTest {
         filmData.setProducer("delete");
         filmData.setOperator("delete");
         filmData.setYear(2021);
-        filmDataDAO.save(filmData);
+        filmDataService.save(filmData);
 
-        assertEquals(3, filmDataDAO.getAll().size());
+        assertEquals(3, filmDataService.getAll().size());
 
-        filmDataDAO.delete("delete");
+        filmDataService.deleteByTitle("delete");
 
-        assertEquals(2, filmDataDAO.getAll().size());
+        assertEquals(2, filmDataService.getAll().size());
 
-        assertNull(filmDataDAO.get("delete"));
+        assertNull(filmDataService.getByTitle("delete"));
     }
 
     @Order(6)
@@ -156,20 +156,20 @@ public class FilmDataTest {
         filmData.setOperator("Operator #1");
         filmData.setYear(2021);
 
-        FilmData filmData1 = filmDataDAO.get("Film title #1");
+        FilmData filmData1 = filmDataService.getByTitle("Film title #1");
 
         filmData1.setFilmDescription("Some description #1 changed");
         filmData1.setFilmTitle("Film title #1 changed");
-        filmDataDAO.update(filmData1);
+        filmDataService.update(filmData1);
 
-        assertEquals(filmDataDAO.get("Film title #1 changed"), filmData);
+        assertEquals(filmDataService.getByTitle("Film title #1 changed"), filmData);
     }
 
     @Test
     @DisplayName("Testing many to many with Cinema table")
     @Order(7)
     public void m6() {
-        FilmData filmData = filmDataDAO.get("Film title #1 changed");
+        FilmData filmData = filmDataService.getByTitle("Film title #1 changed");
         Cinema cinema = new Cinema();
         Cinema cinema1 = new Cinema();
 
@@ -181,16 +181,16 @@ public class FilmDataTest {
         cinema1.setCinemaName("Бочарова");
         cinema1.setInfo("some info2");
 
-        cinema.setFilmsData(Collections.singleton(filmData));
-        cinema1.setFilmsData(new LinkedHashSet<>(Arrays.asList(filmData, filmDataDAO.get("Film title #2"))));
-        cinemaDAO.save(cinema);
-        cinemaDAO.save(cinema1);
 
-        assertEquals(Set.of(cinema, cinema1), filmDataDAO.getCinemas(1));
+        cinema.setFilmsData(new LinkedHashSet<>(Arrays.asList(filmData)));
+        cinema1.setFilmsData(new LinkedHashSet<>(Arrays.asList(filmData, filmDataService.getByTitle("Film title #2"))));
+        cinemaService.save(cinema);
+        cinemaService.save(cinema1);
+        assertEquals(Set.of(cinema, cinema1), filmDataService.getCinemas(1));
 
-        // cinema теперь имеет несколько filmData
-        cinema.setFilmsData(new HashSet<>(Arrays.asList(filmDataDAO.get("Film title #1 changed"), filmDataDAO.get("Film title #2"))));
-        cinemaDAO.update(cinema);
+        //cinema теперь имеет несколько filmData
+        cinema.setFilmsData(new LinkedHashSet<>(Arrays.asList(filmDataService.getByTitle("Film title #1 changed"), filmDataService.getByTitle("Film title #2"))));
+        cinemaService.update(cinema);
     }
 
 }

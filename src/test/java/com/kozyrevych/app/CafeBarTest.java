@@ -1,9 +1,9 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CafeBarDAO;
-import com.kozyrevych.app.dao.CinemaDAO;
 import com.kozyrevych.app.model.CafeBar;
 import com.kozyrevych.app.model.Cinema;
+import com.kozyrevych.app.services.CafeBarService;
+import com.kozyrevych.app.services.CinemaService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class CafeBarTest {
     @Autowired
-    private CafeBarDAO cafeBarDAO = null;
+    private CafeBarService cafeBarService = null;
     @Autowired
-    private CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
     @Test
     @DisplayName("Add and get data to CafeBar table")
@@ -32,16 +32,16 @@ public class CafeBarTest {
         cafeBar.setInfo("some info 1");
         cafeBar.setCinema(cinema);
         cinema.setCafeBar(cafeBar);
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(cafeBar, cafeBarDAO.get(1L));
+        assertEquals(cafeBar, cafeBarService.get(1L));
     }
 
     @Test
     @DisplayName("Checked one to one relationship")
     @Order(3)
     public void m2() {
-        assertEquals(cafeBarDAO.get(1L), cinemaDAO.getCafeBar("Высоцкого"));
+        assertEquals(cafeBarService.get(1L), cinemaService.getCafeBar("Высоцкого"));
     }
 
     @Test
@@ -57,9 +57,9 @@ public class CafeBarTest {
         cinema.setCinemaName("Бочарова");
         cinema.setInfo("some info");
         cinema.setCafeBar(cafeBar);
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(2, cafeBarDAO.getAll().size());
+        assertEquals(2, cafeBarService.getAll().size());
     }
 
 
@@ -67,34 +67,34 @@ public class CafeBarTest {
     @DisplayName("Delete data from CafeBar table using Cinema and cafeBar")
     @Order(5)
     public void m5() {
-        assertEquals(2, cinemaDAO.getAll().size());
+        assertEquals(2, cinemaService.getAll().size());
 
-        cinemaDAO.delete("Высоцкого");
+        cinemaService.deleteByName("Высоцкого");
 
-        assertEquals(1, cinemaDAO.getAll().size());
+        assertEquals(1, cinemaService.getAll().size());
 
-        assertEquals(1, cafeBarDAO.getAll().size(), "каскадное удаление не работает");
+        assertEquals(1, cafeBarService.getAll().size(), "каскадное удаление не работает");
 
-        assertNull(cinemaDAO.get("Высоцкого"));
+        assertNull(cinemaService.getByName("Высоцкого"));
     }
 
     @Test
     @DisplayName("update data in CafeBar table")
     @Order(6)
     public void m6() {
-        CafeBar cafeBar = cafeBarDAO.get(2L);
+        CafeBar cafeBar = cafeBarService.get(2L);
 
         cafeBar.setInfo("UPDATED info");
-        cafeBarDAO.update(cafeBar);
+        cafeBarService.update(cafeBar);
 
-        assertEquals(cafeBar, cafeBarDAO.get(2L));
+        assertEquals(cafeBar, cafeBarService.get(2L));
 
-        cafeBarDAO.delete(2L);
+        cafeBarService.deleteById(2L);
 
-        assertNull(cafeBarDAO.get(1L));
+        assertNull(cafeBarService.get(1L));
 
-        assertNull(cafeBarDAO.get(3L));
+        assertNull(cafeBarService.get(3L));
 
-        assertNotNull(cinemaDAO.get("Бочарова"));
+        assertNotNull(cinemaService.getByName("Бочарова"));
     }
 }

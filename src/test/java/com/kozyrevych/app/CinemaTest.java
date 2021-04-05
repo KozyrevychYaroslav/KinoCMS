@@ -1,7 +1,7 @@
 package com.kozyrevych.app;
 
-import com.kozyrevych.app.dao.CinemaDAO;
 import com.kozyrevych.app.model.Cinema;
+import com.kozyrevych.app.services.CinemaService;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class CinemaTest {
     @Autowired
-    private CinemaDAO cinemaDAO = null;
+    private CinemaService cinemaService = null;
 
     @Test
     @DisplayName("Adding data to cinema table")
@@ -23,16 +23,16 @@ public class CinemaTest {
         cinema.setAddress("Высоцкого 50/б");
         cinema.setCinemaName("Высоцкого");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
     }
 
     @Test
     @DisplayName("Get data from cinema table")
     @Order(3)
     public void m2() {
-        assertAll(() -> assertEquals("Высоцкого", cinemaDAO.get("Высоцкого").getCinemaName()),
-                () -> assertEquals("Высоцкого 50/б", cinemaDAO.get("Высоцкого").getAddress()),
-                () -> assertEquals("some info", cinemaDAO.get("Высоцкого").getInfo())
+        assertAll(() -> assertEquals("Высоцкого", cinemaService.getByName("Высоцкого").getCinemaName()),
+                () -> assertEquals("Высоцкого 50/б", cinemaService.getByName("Высоцкого").getAddress()),
+                () -> assertEquals("some info", cinemaService.getByName("Высоцкого").getInfo())
         );
     }
 
@@ -45,19 +45,19 @@ public class CinemaTest {
         cinema.setAddress("Аркадия 60/а");
         cinema.setCinemaName("Аркадия");
         cinema.setInfo("some info");
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertAll(() -> assertEquals("Высоцкого", cinemaDAO.get("Высоцкого").getCinemaName()),
-                () -> assertEquals("Высоцкого 50/б", cinemaDAO.get("Высоцкого").getAddress()),
-                () -> assertEquals("some info", cinemaDAO.get("Высоцкого").getInfo())
+        assertAll(() -> assertEquals("Высоцкого", cinemaService.getByName("Высоцкого").getCinemaName()),
+                () -> assertEquals("Высоцкого 50/б", cinemaService.getByName("Высоцкого").getAddress()),
+                () -> assertEquals("some info", cinemaService.getByName("Высоцкого").getInfo())
         );
 
-        assertAll(() -> assertEquals("Аркадия", cinemaDAO.get("Аркадия").getCinemaName()),
-                () -> assertEquals("Аркадия 60/а", cinemaDAO.get("Аркадия").getAddress()),
-                () -> assertEquals("some info", cinemaDAO.get("Аркадия").getInfo())
+        assertAll(() -> assertEquals("Аркадия", cinemaService.getByName("Аркадия").getCinemaName()),
+                () -> assertEquals("Аркадия 60/а", cinemaService.getByName("Аркадия").getAddress()),
+                () -> assertEquals("some info", cinemaService.getByName("Аркадия").getInfo())
         );
 
-        assertEquals(2, cinemaDAO.getAll().size());
+        assertEquals(2, cinemaService.getAll().size());
 
     }
 
@@ -70,15 +70,15 @@ public class CinemaTest {
         cinema.setAddress("delete");
         cinema.setCinemaName("delete");
         cinema.setInfo("delete");
-        cinemaDAO.save(cinema);
+        cinemaService.save(cinema);
 
-        assertEquals(3, cinemaDAO.getAll().size());
+        assertEquals(3, cinemaService.getAll().size());
 
-        cinemaDAO.delete("delete");
+        cinemaService.deleteByName("delete");
 
-        assertEquals(2, cinemaDAO.getAll().size());
+        assertEquals(2, cinemaService.getAll().size());
 
-        assertNull(cinemaDAO.get("delete"));
+        assertNull(cinemaService.getByName("delete"));
     }
 
     @Order(6)
@@ -91,11 +91,11 @@ public class CinemaTest {
         cinema.setCinemaName("Аркадия");
         cinema.setInfo("some info changed");
 
-        Cinema cinema1 = cinemaDAO.get("Аркадия");
+        Cinema cinema1 = cinemaService.getByName("Аркадия");
 
         cinema1.setInfo("some info changed");
-        cinemaDAO.update(cinema1);
+        cinemaService.update(cinema1);
 
-        assertEquals(cinema, cinemaDAO.get("Аркадия"));
+        assertEquals(cinema, cinemaService.getByName("Аркадия"));
     }
 }

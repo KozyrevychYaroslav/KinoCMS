@@ -8,65 +8,45 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Component
-public class CafeBarDAO implements DAO<CafeBar, Long> {
-    private SessionFactory factory;
-
-    @Autowired
-    public CafeBarDAO(SessionFactory factory) {
-        this.factory = factory;
-    }
+public class CafeBarDAO implements DAO<CafeBar> {
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void save(CafeBar cafeBar) {
-        try (final Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            session.save(cafeBar);
-            transaction.commit();
-        }
+        entityManager.persist(cafeBar);
     }
 
     @Override
-    public void delete(Long id) {
-        try (final Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            CafeBar c = get(id);
-            c = (CafeBar) session.merge(c);
-            try {
-                session.delete(c);
-            } catch (IllegalArgumentException e) {
-                System.out.println("No cafe bar with id: " + id + " in database ");
-            }
-            transaction.commit();
+    public void delete(CafeBar cafeBar) {
+        try {
+            entityManager.remove(cafeBar);
+        } catch (IllegalArgumentException e) {
+            System.out.println("No cafe: " + cafeBar + " in database ");
         }
     }
 
     @Override
     public void update(CafeBar cafeBar) {
-        try (final Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            try {
-                session.update(cafeBar);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Can't update cafe bar");
-            }
-            transaction.commit();
+        try {
+            entityManager.merge(cafeBar);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Can't update cafe bar");
         }
     }
 
     @Override
-    public CafeBar get(Long id) {
-        try (final Session session = factory.openSession()) {
-            return session.get(CafeBar.class, id);
-        }
+    public CafeBar get(long id) {
+        return entityManager.find(CafeBar.class, id);
     }
 
     @Override
     public List<CafeBar> getAll() {
-        try (final Session session = factory.openSession()) {
-            return session.createQuery("from CafeBar ", CafeBar.class).getResultList();
-        }
+        return entityManager.createQuery("from CafeBar ", CafeBar.class).getResultList();
     }
 }
