@@ -29,7 +29,7 @@ public class News {
     private String info = "";
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cinema_id", nullable = false)
+    @JoinColumn(name = "cinema_id")
     private Cinema cinema;
 
     @Override

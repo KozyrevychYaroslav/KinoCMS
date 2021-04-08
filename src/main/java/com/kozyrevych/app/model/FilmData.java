@@ -34,6 +34,10 @@ public class FilmData {
     @Size(min = 2, max = 200, message = "Incorrect size")
     private String composer = "";
 
+    private boolean is3D;
+    private boolean isVip;
+    private boolean isDBOX;
+
     @Size(min = 2, max = 200, message = "Incorrect size")
     private String producer = "";
 
@@ -66,9 +70,16 @@ public class FilmData {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmData", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CurrentFilmData> currentFilmData;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "filmData", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Image> images;
+
     @ManyToMany(mappedBy = "filmsData", fetch = FetchType.LAZY)
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Set<Cinema> cinemas;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "seo_id")
+    private SEO seo;
 
     @PreRemove
     public void removeFilmDataFromCinemas() {

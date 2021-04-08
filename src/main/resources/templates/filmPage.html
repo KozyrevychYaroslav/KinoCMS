@@ -83,7 +83,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="pages/gallery.html" class="nav-link">
+                        <a href="banner" class="nav-link">
 
                             <p>
                                 Баннера/Слайдеры
@@ -162,77 +162,56 @@
     </aside>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <span style="font-weight:bold;position: relative; left:450px; font-size: 45px; color: #1d6fa5">На главной верх</span>
-        <div class="row">
-            <table>
-                <tr>
-                    <td th:each="image : ${images}">
-                        <div class="card-tools" style="margin-left: 345px;">
-                            <a th:href="@{delete/{id}(id=${image.imageName})}">
-                                <i>&#10006;</i>
-                            </a>
-                        </div>
-                        <img th:src="@{${image.imagePath}}" style="margin-left: 100px; height: 200px; width: 250px">
-                        <br><br>
-                        <div style="margin-left: 55px">URL:<input type="text" size="35" placeholder="URL"></div>
-                        <br>
-                        <div style="margin-left: 45px">Текст:<input type="text" size="35" placeholder="Текст"></div>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        <br>
+        <div style="margin-left: 55px">Название фильма<input style="margin-left: 35px" type="text" size="35" placeholder="Название фильма"></div>
+
+        <br><div style="margin-left: 55px">Описание </div>
+        <textarea style="margin-left: 150px; margin-top: -20px; height: 120px; width: 1000px; padding: 45px 5px;"  placeholder="Текст"></textarea>
+
         <br><br>
-        <form action="addPhoto" method="post">
-            <div style="margin-left: 375px">
-                <input type="file" id="fileInput" name="fileInput" style="width:250px;margin-left: 90px">
-                <input type="hidden" id="fileVal" name="fileVal">
-                <input type="submit" value="Загрузить" onclick="mySubmit()">
-            </div>
-        </form>
-        <br><br>
-        <span style="font-weight:bold;position: relative; left:260px; font-size: 45px; color: #1d6fa5">Сквозной банер за заднем фоне</span><br><br>
-        <div th:each="foneImage : ${foneImages}">
-            <img th:src="@{${foneImage.imagePath}}" style="margin-left: 350px; height: 400px; width: 500px"><br>
+        <span style="margin-left: 55px; size: 100px">Главная картинка</span><br><br>
+        <div th:each="filmMainImage : ${filmMainImages}">
+            <img th:src="@{${filmMainImage.imagePath}}" style="margin-left: 350px; height: 400px; width: 500px"><br>
             <br>
             <div style="margin-left: 375px">
-            <form th:action="@{delete/{id}(id=${foneImage.imageName})}" >
-                <input type="submit" value="Удалить">
-            </form>
+                <form th:action="@{deleteFilm/{id}/{filmName}(id=${filmMainImage.imageName},filmName=${filmName})}" >
+                    <input type="submit" value="Удалить">
+                </form>
             </div>
         </div>
         <div style="margin-left: 495px; margin-top: -29px">
-            <form method="post" action="addFoneImage">
+            <form method="post" th:action="@{addFilmMainImage/{filmName}(filmName=${filmName})}">
                 <input type="file" id="fileInput1" name="fileInput11" style="width:250px">
                 <input type="hidden" id="fileVal1" name="fileVal1">
                 <input type="submit" value="Добавить" onclick="mySubmit1()">
             </form>
         </div>
-        <br><br>
-        <span style="font-weight:bold;position: relative; left:300px; font-size: 45px; color: #1d6fa5">На главной Новости Акции</span><br><br>
-        <div class="row">
-            <table>
-                <tr>
-                    <td th:each="mainNewsStocksImage : ${mainNewsStocksImages}">
-                        <div class="card-tools" style="margin-left: 345px;">
-                            <a th:href="@{delete/{id}(id=${mainNewsStocksImage.imageName})}">
-                                <i>&#10006;</i>
-                            </a>
-                        </div>
-                        <img th:src="@{${mainNewsStocksImage.imagePath}}" style="margin-left: 100px; height: 200px; width: 250px">
-                        <br><br>
-                        <div style="margin-left: 55px">URL:<input type="text" size="35" placeholder="URL"></div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <br>
-        <form action="addNewsStocksImage" method="post">
-            <div style="margin-left: 375px">
-                <input type="file" id="fileInput2" name="fileInput2" style="width:250px;margin-left: 90px">
-                <input type="hidden" id="fileVal2" name="fileVal2">
-                <input type="submit" value="Загрузить" onclick="mySubmit2()">
-            </div>
-        </form>
+<!--        <br><br>-->
+<!--        <span style="font-weight:bold;position: relative; left:300px; font-size: 45px; color: #1d6fa5">На главной Новости Акции</span><br><br>-->
+<!--        <div class="row">-->
+<!--            <table>-->
+<!--                <tr>-->
+<!--                    <td th:each="mainNewsStocksImage : ${mainNewsStocksImages}">-->
+<!--                        <div class="card-tools" style="margin-left: 345px;">-->
+<!--                            <a th:href="@{delete{id}(id=${mainNewsStocksImage.imageName})}">-->
+<!--                                <i>&#10006;</i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                        <img th:src="@{${mainNewsStocksImage.imagePath}}" style="margin-left: 100px; height: 200px; width: 250px">-->
+<!--                        <br><br>-->
+<!--                        <div style="margin-left: 55px">URL:<input type="text" size="35" placeholder="URL"></div>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--            </table>-->
+<!--        </div>-->
+<!--        <br>-->
+<!--        <form action="addNewsStocksImage" method="post">-->
+<!--            <div style="margin-left: 375px">-->
+<!--                <input type="file" id="fileInput2" name="fileInput2" style="width:250px;margin-left: 90px">-->
+<!--                <input type="hidden" id="fileVal2" name="fileVal2">-->
+<!--                <input type="submit" value="Загрузить" onclick="mySubmit2()">-->
+<!--            </div>-->
+<!--        </form>-->
         <br>
         <div>
             <input type="hidden">
@@ -250,10 +229,6 @@
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 <script>
     $.widget.bridge('uibutton', $.ui.button)
-
-    function mySubmit() {
-        document.getElementById('fileVal').value = document.getElementById('fileInput').value;
-    }
 
     function mySubmit1() {
         document.getElementById('fileVal1').value = document.getElementById('fileInput1').value;

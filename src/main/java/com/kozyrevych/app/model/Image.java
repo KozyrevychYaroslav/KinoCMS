@@ -29,6 +29,10 @@ public class Image {
     @JoinColumn(name = "cinema_id")
     private Cinema cinema;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "film_data_id")
+    private FilmData filmData;
+
     @Override
     public String toString() {
         return "Image{" +

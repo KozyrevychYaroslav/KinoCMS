@@ -46,7 +46,7 @@ public class FilmDataService {
 
         // так как FilmData является главной таблицей в связи manyToMany, а мы решили удалить элемент из нее,
         // то сначала надо очистить все ссылки на нее из таблицы Cinema
-        c.removeFilmDataFromCinemas();
+
         filmDataDAO.delete(c);
     }
 
